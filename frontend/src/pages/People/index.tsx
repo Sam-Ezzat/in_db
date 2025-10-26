@@ -1,8 +1,10 @@
 import { useTheme } from '../../contexts/ThemeContext'
+import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Filter, Download, User } from 'lucide-react'
 
 const People = () => {
   const { themeConfig } = useTheme()
+  const navigate = useNavigate()
 
   // Mock data - replace with real API call
   const people = [
@@ -25,6 +27,7 @@ const People = () => {
           </p>
         </div>
         <button
+          onClick={() => navigate('/people/new')}
           className="flex items-center px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
           style={{ backgroundColor: themeConfig.colors.primary }}
         >
@@ -161,12 +164,14 @@ const People = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <button 
+                      onClick={() => navigate(`/people/${person.id}`)}
                       className="hover:opacity-80 transition-opacity mr-3"
                       style={{ color: themeConfig.colors.primary }}
                     >
                       View
                     </button>
                     <button 
+                      onClick={() => navigate(`/people/${person.id}/edit`)}
                       className="hover:opacity-80 transition-opacity"
                       style={{ color: themeConfig.colors.accent }}
                     >

@@ -55,13 +55,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, create a user based on email
+      // Admin credentials
+      if (email === 'admin@church.com' && password === 'admin123') {
+        const adminData: User = {
+          id: 'admin_001',
+          email,
+          firstName: 'Church',
+          lastName: 'Administrator',
+          role: 'admin',
+          churchId: '1',
+          churchName: 'Grace Community Church'
+        };
+        
+        setAuthToken('admin-token-12345');
+        setCurrentUser(adminData);
+        setUser(adminData);
+        return;
+      }
+      
+      // Pastor credentials
+      if (email === 'pastor@church.com' && password === 'pastor123') {
+        const pastorData: User = {
+          id: 'pastor_001',
+          email,
+          firstName: 'John',
+          lastName: 'Smith',
+          role: 'pastor',
+          churchId: '1',
+          churchName: 'Grace Community Church'
+        };
+        
+        setAuthToken('pastor-token-12345');
+        setCurrentUser(pastorData);
+        setUser(pastorData);
+        return;
+      }
+      
+      // Default demo user for any other credentials
       const userData: User = {
         id: `user_${Date.now()}`,
         email,
         firstName: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
         lastName: 'User',
-        role: 'member'
+        role: 'member',
+        churchId: '1',
+        churchName: 'Grace Community Church'
       };
       
       // Set auth data

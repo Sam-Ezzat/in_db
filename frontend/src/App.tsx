@@ -14,6 +14,8 @@ import {
 // Lazy load main pages
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const People = lazy(() => import('./pages/People'))
+const PersonDetail = lazy(() => import('./pages/People/PersonDetail'))
+const PersonForm = lazy(() => import('./pages/People/PersonForm'))
 const Churches = lazy(() => import('./pages/Churches'))
 const Committees = lazy(() => import('./pages/Committees'))
 const Teams = lazy(() => import('./pages/Teams'))
@@ -72,6 +74,9 @@ function App() {
                     <Routes>
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/people" element={<People />} />
+                      <Route path="/people/new" element={<PersonForm />} />
+                      <Route path="/people/:id" element={<PersonDetail />} />
+                      <Route path="/people/:id/edit" element={<PersonForm />} />
                       <Route path="/churches" element={<Churches />} />
                       <Route path="/committees" element={<Committees />} />
                       <Route path="/teams" element={<Teams />} />

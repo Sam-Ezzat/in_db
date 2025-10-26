@@ -113,6 +113,27 @@ const Login: React.FC = () => {
           >
             Welcome back to the Church Management System
           </p>
+          
+          {/* Demo Credentials */}
+          <div 
+            className="mt-4 p-4 rounded-lg border"
+            style={{ 
+              backgroundColor: themeConfig.colors.secondary,
+              borderColor: themeConfig.colors.divider 
+            }}
+          >
+            <h3 
+              className="text-sm font-semibold mb-2"
+              style={{ color: themeConfig.colors.text }}
+            >
+              Demo Credentials:
+            </h3>
+            <div className="space-y-1 text-xs" style={{ color: themeConfig.colors.text, opacity: 0.8 }}>
+              <p><strong>Admin:</strong> admin@church.com / admin123</p>
+              <p><strong>Pastor:</strong> pastor@church.com / pastor123</p>
+              <p><strong>Member:</strong> Any email / Any password</p>
+            </div>
+          </div>
         </div>
 
         {/* Login Form */}
