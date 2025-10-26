@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
@@ -51,6 +52,7 @@ interface Evaluation {
 }
 
 const Evaluations: React.FC = () => {
+  const { themeConfig } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
@@ -150,15 +152,27 @@ const Evaluations: React.FC = () => {
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Evaluations</h1>
-          <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+          <h1 
+            className="text-2xl font-bold"
+            style={{ color: themeConfig.colors.text }}
+          >
+            Evaluations
+          </h1>
+          <p 
+            className="mt-2 text-sm"
+            style={{ color: themeConfig.colors.text, opacity: 0.7 }}
+          >
             Create and manage evaluation forms for programs, events, and services
           </p>
         </div>
         <div className="mt-4 sm:mt-0">
           <button 
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
+            style={{ 
+              backgroundColor: themeConfig.colors.primary,
+              borderColor: themeConfig.colors.primary
+            }}
           >
             <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
             Create Evaluation
@@ -168,18 +182,31 @@ const Evaluations: React.FC = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div 
+          className="overflow-hidden shadow rounded-lg"
+          style={{ backgroundColor: themeConfig.colors.secondary }}
+        >
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <ClipboardDocumentListIcon className="h-6 w-6 text-gray-400" aria-hidden="true" />
+                <ClipboardDocumentListIcon 
+                  className="h-6 w-6" 
+                  style={{ color: themeConfig.colors.text, opacity: 0.6 }}
+                  aria-hidden="true" 
+                />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                  <dt 
+                    className="text-sm font-medium truncate"
+                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
+                  >
                     Total Evaluations
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900 dark:text-white">
+                  <dd 
+                    className="text-lg font-medium"
+                    style={{ color: themeConfig.colors.text }}
+                  >
                     {stats.total}
                   </dd>
                 </dl>
@@ -188,7 +215,10 @@ const Evaluations: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div 
+          className="overflow-hidden shadow rounded-lg"
+          style={{ backgroundColor: themeConfig.colors.secondary }}
+        >
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -196,10 +226,16 @@ const Evaluations: React.FC = () => {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                  <dt 
+                    className="text-sm font-medium truncate"
+                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
+                  >
                     Active Evaluations
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900 dark:text-white">
+                  <dd 
+                    className="text-lg font-medium"
+                    style={{ color: themeConfig.colors.text }}
+                  >
                     {stats.active}
                   </dd>
                 </dl>
@@ -208,7 +244,10 @@ const Evaluations: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div 
+          className="overflow-hidden shadow rounded-lg"
+          style={{ backgroundColor: themeConfig.colors.secondary }}
+        >
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -216,10 +255,16 @@ const Evaluations: React.FC = () => {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                  <dt 
+                    className="text-sm font-medium truncate"
+                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
+                  >
                     Total Responses
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900 dark:text-white">
+                  <dd 
+                    className="text-lg font-medium"
+                    style={{ color: themeConfig.colors.text }}
+                  >
                     {stats.totalResponses.toLocaleString()}
                   </dd>
                 </dl>
@@ -228,7 +273,10 @@ const Evaluations: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+        <div 
+          className="overflow-hidden shadow rounded-lg"
+          style={{ backgroundColor: themeConfig.colors.secondary }}
+        >
           <div className="p-5">
             <div className="flex items-center">
               <div className="flex-shrink-0">
@@ -236,10 +284,16 @@ const Evaluations: React.FC = () => {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                  <dt 
+                    className="text-sm font-medium truncate"
+                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
+                  >
                     Average Rating
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900 dark:text-white">
+                  <dd 
+                    className="text-lg font-medium"
+                    style={{ color: themeConfig.colors.text }}
+                  >
                     {stats.averageRating.toFixed(1)}
                   </dd>
                 </dl>
@@ -250,25 +304,42 @@ const Evaluations: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+      <div 
+        className="shadow rounded-lg p-6"
+        style={{ backgroundColor: themeConfig.colors.secondary }}
+      >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              <MagnifyingGlassIcon 
+                className="h-5 w-5"
+                style={{ color: themeConfig.colors.text, opacity: 0.5 }}
+                aria-hidden="true" 
+              />
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border rounded-md leading-5 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="Search evaluations..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                backgroundColor: themeConfig.colors.background,
+                borderColor: themeConfig.colors.divider,
+                color: themeConfig.colors.text
+              }}
             />
           </div>
 
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            style={{
+              backgroundColor: themeConfig.colors.background,
+              borderColor: themeConfig.colors.divider,
+              color: themeConfig.colors.text
+            }}
           >
             <option value="All">All Types</option>
             <option value="Program">Program</option>
@@ -281,7 +352,12 @@ const Evaluations: React.FC = () => {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            style={{
+              backgroundColor: themeConfig.colors.background,
+              borderColor: themeConfig.colors.divider,
+              color: themeConfig.colors.text
+            }}
           >
             <option value="All">All Status</option>
             <option value="Active">Active</option>
@@ -293,7 +369,10 @@ const Evaluations: React.FC = () => {
       </div>
 
       {/* Evaluations List */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
+      <div 
+        className="shadow rounded-lg"
+        style={{ backgroundColor: themeConfig.colors.secondary }}
+      >
         <div className="px-4 py-5 sm:p-6">
           <div className="space-y-4">
             {filteredEvaluations.map((evaluation) => {
@@ -303,12 +382,19 @@ const Evaluations: React.FC = () => {
               return (
                 <div
                   key={evaluation.id}
-                  className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                  style={{ 
+                    borderColor: themeConfig.colors.divider,
+                    backgroundColor: themeConfig.colors.background
+                  }}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                        <h3 
+                          className="text-lg font-medium"
+                          style={{ color: themeConfig.colors.text }}
+                        >
                           {evaluation.title}
                         </h3>
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeColor.bg} ${typeColor.text}`}>
@@ -319,11 +405,17 @@ const Evaluations: React.FC = () => {
                         </span>
                       </div>
                       
-                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                      <p 
+                        className="mt-2 text-sm"
+                        style={{ color: themeConfig.colors.text, opacity: 0.7 }}
+                      >
                         {evaluation.description}
                       </p>
                       
-                      <div className="mt-3 flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
+                      <div 
+                        className="mt-3 flex flex-wrap gap-4 text-sm"
+                        style={{ color: themeConfig.colors.text, opacity: 0.6 }}
+                      >
                         <div className="flex items-center">
                           <CalendarDaysIcon className="h-4 w-4 mr-1" />
                           Created: {new Date(evaluation.createdDate).toLocaleDateString()}
@@ -349,23 +441,38 @@ const Evaluations: React.FC = () => {
                       </div>
                       
                       <div className="mt-2">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                        <span 
+                          className="text-xs"
+                          style={{ color: themeConfig.colors.text, opacity: 0.6 }}
+                        >
                           Target: {evaluation.targetAudience} • Category: {evaluation.category}
                         </span>
                       </div>
                     </div>
                     
                     <div className="flex items-center space-x-2 ml-4">
-                      <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                      <button 
+                        className="p-2 hover:opacity-70"
+                        style={{ color: themeConfig.colors.text, opacity: 0.6 }}
+                      >
                         <EyeIcon className="h-5 w-5" />
                       </button>
-                      <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                      <button 
+                        className="p-2 hover:opacity-70"
+                        style={{ color: themeConfig.colors.text, opacity: 0.6 }}
+                      >
                         <ChartBarIcon className="h-5 w-5" />
                       </button>
-                      <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                      <button 
+                        className="p-2 hover:opacity-70"
+                        style={{ color: themeConfig.colors.text, opacity: 0.6 }}
+                      >
                         <PencilIcon className="h-5 w-5" />
                       </button>
-                      <button className="p-2 text-red-400 hover:text-red-600">
+                      <button 
+                        className="p-2 hover:opacity-70"
+                        style={{ color: '#ef4444' }}
+                      >
                         <TrashIcon className="h-5 w-5" />
                       </button>
                     </div>
@@ -380,25 +487,42 @@ const Evaluations: React.FC = () => {
       {/* Create Evaluation Modal placeholder */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white dark:bg-gray-800">
+          <div 
+            className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md"
+            style={{ 
+              backgroundColor: themeConfig.colors.secondary,
+              borderColor: themeConfig.colors.divider
+            }}
+          >
             <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              <h3 
+                className="text-lg font-medium mb-4"
+                style={{ color: themeConfig.colors.text }}
+              >
                 Create New Evaluation
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              <p 
+                className="text-sm mb-4"
+                style={{ color: themeConfig.colors.text, opacity: 0.7 }}
+              >
                 Evaluation form builder will be implemented here with drag-and-drop question types, 
                 conditional logic, and response analytics.
               </p>
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md"
+                  className="px-4 py-2 text-sm font-medium rounded-md hover:opacity-80"
+                  style={{
+                    color: themeConfig.colors.text,
+                    backgroundColor: themeConfig.colors.divider
+                  }}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md"
+                  className="px-4 py-2 text-sm font-medium text-white rounded-md hover:opacity-90"
+                  style={{ backgroundColor: themeConfig.colors.primary }}
                 >
                   Create Evaluation
                 </button>
