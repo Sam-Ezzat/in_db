@@ -4,11 +4,7 @@ import { Suspense, lazy } from 'react'
 import MainLayout from './components/Layout/MainLayout'
 import AuthLayout from './components/Layout/AuthLayout'
 import { 
-<<<<<<< HEAD
-=======
-  Reports, 
->>>>>>> eb9079ebdd07e7bd7c74f88104c8628306d9a084
-  Evaluations, Login, Register, ForgotPassword, 
+  Login, Register, ForgotPassword, 
   ResetPassword
 } from './components/PlaceholderComponents'
 
@@ -20,10 +16,8 @@ const Committees = lazy(() => import('./pages/Committees'))
 const Teams = lazy(() => import('./pages/Teams'))
 const Groups = lazy(() => import('./pages/Groups'))
 const Events = lazy(() => import('./pages/Events'))
-<<<<<<< HEAD
 const Reports = lazy(() => import('./pages/Reports'))
-=======
->>>>>>> eb9079ebdd07e7bd7c74f88104c8628306d9a084
+const Evaluations = lazy(() => import('./pages/Evaluations'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Profile = lazy(() => import('./pages/Profile'))
 

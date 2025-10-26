@@ -3,13 +3,8 @@ import { useTheme } from '../../contexts/ThemeContext'
 import { 
   CalendarIcon, ClockIcon, MapPinIcon, UserIcon, 
   PlusIcon, MagnifyingGlassIcon,
-<<<<<<< HEAD
   EllipsisVerticalIcon, PencilIcon,
   UsersIcon
-=======
-  EllipsisVerticalIcon, PencilIcon, TrashIcon,
-  UsersIcon, ChevronLeftIcon, ChevronRightIcon
->>>>>>> eb9079ebdd07e7bd7c74f88104c8628306d9a084
 } from '@heroicons/react/24/outline'
 
 interface Event {
@@ -32,11 +27,6 @@ const Events: React.FC = () => {
   const { themeConfig } = useTheme()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
-<<<<<<< HEAD
-=======
-  const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar')
-  const [selectedDate, setSelectedDate] = useState(new Date())
->>>>>>> eb9079ebdd07e7bd7c74f88104c8628306d9a084
 
   // Mock data for events
   const events: Event[] = [
@@ -99,43 +89,26 @@ const Events: React.FC = () => {
 
   const getCategoryColor = (category: string) => {
     const colors = {
-<<<<<<< HEAD
       service: { bg: '#3B82F6', text: '#FFFFFF' },
       meeting: { bg: '#8B5CF6', text: '#FFFFFF' },
       social: { bg: '#10B981', text: '#FFFFFF' },
       outreach: { bg: '#F59E0B', text: '#FFFFFF' },
       youth: { bg: '#EC4899', text: '#FFFFFF' },
       other: { bg: '#6B7280', text: '#FFFFFF' }
-=======
-      service: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-      meeting: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
-      social: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-      outreach: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-      youth: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300',
-      other: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
->>>>>>> eb9079ebdd07e7bd7c74f88104c8628306d9a084
     }
     return colors[category as keyof typeof colors] || colors.other
   }
 
   const getStatusColor = (status: string) => {
     const colors = {
-<<<<<<< HEAD
       upcoming: { bg: '#3B82F6', text: '#FFFFFF' },
       ongoing: { bg: '#10B981', text: '#FFFFFF' },
       completed: { bg: '#6B7280', text: '#FFFFFF' },
       cancelled: { bg: '#EF4444', text: '#FFFFFF' }
-=======
-      upcoming: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-      ongoing: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-      completed: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
-      cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
->>>>>>> eb9079ebdd07e7bd7c74f88104c8628306d9a084
     }
     return colors[status as keyof typeof colors] || colors.upcoming
   }
 
-<<<<<<< HEAD
   const getRecurringBadgeStyle = () => {
     return {
       backgroundColor: themeConfig.colors.accent + '20',
@@ -144,8 +117,6 @@ const Events: React.FC = () => {
     }
   }
 
-=======
->>>>>>> eb9079ebdd07e7bd7c74f88104c8628306d9a084
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -154,43 +125,6 @@ const Events: React.FC = () => {
     return matchesSearch && matchesCategory
   })
 
-<<<<<<< HEAD
-=======
-  const generateCalendarDays = () => {
-    const year = selectedDate.getFullYear()
-    const month = selectedDate.getMonth()
-    const firstDay = new Date(year, month, 1)
-    const startDate = new Date(firstDay)
-    startDate.setDate(startDate.getDate() - firstDay.getDay())
-    
-    const days = []
-    for (let i = 0; i < 42; i++) {
-      const date = new Date(startDate)
-      date.setDate(startDate.getDate() + i)
-      days.push(date)
-    }
-    return days
-  }
-
-  const getEventsForDate = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0]
-    return filteredEvents.filter(event => event.date === dateStr)
-  }
-
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    const newDate = new Date(selectedDate)
-    newDate.setMonth(selectedDate.getMonth() + (direction === 'next' ? 1 : -1))
-    setSelectedDate(newDate)
-  }
-
-  const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ]
-
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
->>>>>>> eb9079ebdd07e7bd7c74f88104c8628306d9a084
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
@@ -411,7 +345,6 @@ const Events: React.FC = () => {
                       >
                         {event.title}
                       </h3>
-<<<<<<< HEAD
                       <span 
                         className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
                         style={{
@@ -426,13 +359,6 @@ const Events: React.FC = () => {
                           className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
                           style={getRecurringBadgeStyle()}
                         >
-=======
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getCategoryColor(event.category)}`}>
-                        {event.category}
-                      </span>
-                      {event.isRecurring && (
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
->>>>>>> eb9079ebdd07e7bd7c74f88104c8628306d9a084
                           Recurring
                         </span>
                       )}
@@ -465,7 +391,6 @@ const Events: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-<<<<<<< HEAD
                     <span 
                       className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
                       style={{
@@ -473,9 +398,6 @@ const Events: React.FC = () => {
                         color: getStatusColor(event.status).text
                       }}
                     >
-=======
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(event.status)}`}>
->>>>>>> eb9079ebdd07e7bd7c74f88104c8628306d9a084
                       {event.status}
                     </span>
                     <button

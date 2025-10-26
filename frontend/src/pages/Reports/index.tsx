@@ -3,7 +3,7 @@ import { useTheme } from '../../contexts/ThemeContext'
 import { 
   ChartBarIcon, UsersIcon, CurrencyDollarIcon, CalendarIcon,
   ArrowDownTrayIcon, FunnelIcon, ChartPieIcon,
-  TrendingUpIcon, TrendingDownIcon, UserGroupIcon,
+  ArrowTrendingUpIcon, ArrowTrendingDownIcon, UserGroupIcon,
   BuildingOffice2Icon, ClockIcon
 } from '@heroicons/react/24/outline'
 
@@ -150,8 +150,8 @@ const Reports: React.FC = () => {
   }
 
   const getChangeIcon = (changeType: string) => {
-    if (changeType === 'increase') return TrendingUpIcon
-    if (changeType === 'decrease') return TrendingDownIcon
+    if (changeType === 'increase') return ArrowTrendingUpIcon
+    if (changeType === 'decrease') return ArrowTrendingDownIcon
     return () => null
   }
 
