@@ -4,7 +4,6 @@ import { Suspense, lazy } from 'react'
 import MainLayout from './components/Layout/MainLayout'
 import AuthLayout from './components/Layout/AuthLayout'
 import { 
-  DiscipleshipGroups, Events, Reports, 
   Evaluations, Login, Register, ForgotPassword, 
   ResetPassword
 } from './components/PlaceholderComponents'
@@ -15,6 +14,9 @@ const People = lazy(() => import('./pages/People'))
 const Churches = lazy(() => import('./pages/Churches'))
 const Committees = lazy(() => import('./pages/Committees'))
 const Teams = lazy(() => import('./pages/Teams'))
+const Groups = lazy(() => import('./pages/Groups'))
+const Events = lazy(() => import('./pages/Events'))
+const Reports = lazy(() => import('./pages/Reports'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Profile = lazy(() => import('./pages/Profile'))
 
@@ -45,7 +47,7 @@ function App() {
                   <Route path="/churches" element={<Churches />} />
                   <Route path="/committees" element={<Committees />} />
                   <Route path="/teams" element={<Teams />} />
-                  <Route path="/groups" element={<DiscipleshipGroups />} />
+                  <Route path="/groups" element={<Groups />} />
                   <Route path="/events" element={<Events />} />
                   <Route path="/reports" element={<Reports />} />
                   <Route path="/evaluations" element={<Evaluations />} />
