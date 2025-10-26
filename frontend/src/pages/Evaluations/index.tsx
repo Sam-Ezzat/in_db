@@ -17,23 +17,23 @@ import {
 // Enhanced color functions with theme integration
 const getTypeColor = (type: string) => {
   const colors = {
-    'Program': { bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-700 dark:text-blue-300' },
-    'Event': { bg: 'bg-green-50 dark:bg-green-900/20', text: 'text-green-700 dark:text-green-300' },
-    'Service': { bg: 'bg-purple-50 dark:bg-purple-900/20', text: 'text-purple-700 dark:text-purple-300' },
-    'Ministry': { bg: 'bg-orange-50 dark:bg-orange-900/20', text: 'text-orange-700 dark:text-orange-300' },
-    'Leadership': { bg: 'bg-red-50 dark:bg-red-900/20', text: 'text-red-700 dark:text-red-300' },
+    'Program': { bg: '#dbeafe', text: '#1e40af', darkBg: '#1e3a8a20', darkText: '#93c5fd' },
+    'Event': { bg: '#dcfce7', text: '#166534', darkBg: '#16553420', darkText: '#86efac' },
+    'Service': { bg: '#f3e8ff', text: '#7c2d12', darkBg: '#7c2d1220', darkText: '#c4b5fd' },
+    'Ministry': { bg: '#fed7aa', text: '#c2410c', darkBg: '#c2410c20', darkText: '#fdba74' },
+    'Leadership': { bg: '#fecaca', text: '#dc2626', darkBg: '#dc262620', darkText: '#fca5a5' },
   };
-  return colors[type as keyof typeof colors] || { bg: 'bg-gray-50 dark:bg-gray-700', text: 'text-gray-600 dark:text-gray-300' };
+  return colors[type as keyof typeof colors] || { bg: '#f3f4f6', text: '#4b5563', darkBg: '#4b556320', darkText: '#d1d5db' };
 };
 
 const getStatusColor = (status: string) => {
   const colors = {
-    'Active': { bg: 'bg-green-50 dark:bg-green-900/20', text: 'text-green-700 dark:text-green-300' },
-    'Draft': { bg: 'bg-yellow-50 dark:bg-yellow-900/20', text: 'text-yellow-700 dark:text-yellow-300' },
-    'Completed': { bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-700 dark:text-blue-300' },
-    'Archived': { bg: 'bg-gray-50 dark:bg-gray-700', text: 'text-gray-600 dark:text-gray-300' },
+    'Active': { bg: '#dcfce7', text: '#166534', darkBg: '#16553420', darkText: '#86efac' },
+    'Draft': { bg: '#fef3c7', text: '#d97706', darkBg: '#d9770620', darkText: '#fcd34d' },
+    'Completed': { bg: '#dbeafe', text: '#1e40af', darkBg: '#1e3a8a20', darkText: '#93c5fd' },
+    'Archived': { bg: '#f3f4f6', text: '#4b5563', darkBg: '#4b556320', darkText: '#d1d5db' },
   };
-  return colors[status as keyof typeof colors] || { bg: 'bg-gray-50 dark:bg-gray-700', text: 'text-gray-600 dark:text-gray-300' };
+  return colors[status as keyof typeof colors] || { bg: '#f3f4f6', text: '#4b5563', darkBg: '#4b556320', darkText: '#d1d5db' };
 };
 
 interface Evaluation {
@@ -52,7 +52,7 @@ interface Evaluation {
 }
 
 const Evaluations: React.FC = () => {
-  const { themeConfig } = useTheme();
+  const { themeConfig, theme } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
@@ -397,10 +397,22 @@ const Evaluations: React.FC = () => {
                         >
                           {evaluation.title}
                         </h3>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeColor.bg} ${typeColor.text}`}>
+                        <span 
+                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                          style={{
+                            backgroundColor: theme === 'midnight-prayer' ? typeColor.darkBg : typeColor.bg,
+                            color: theme === 'midnight-prayer' ? typeColor.darkText : typeColor.text
+                          }}
+                        >
                           {evaluation.type}
                         </span>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor.bg} ${statusColor.text}`}>
+                        <span 
+                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                          style={{
+                            backgroundColor: theme === 'midnight-prayer' ? statusColor.darkBg : statusColor.bg,
+                            color: theme === 'midnight-prayer' ? statusColor.darkText : statusColor.text
+                          }}
+                        >
                           {evaluation.status}
                         </span>
                       </div>
