@@ -1,6 +1,8 @@
 import { ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../../contexts/ThemeContext'
+import { useAuth } from '../../contexts/AuthContext'
+import { getUserFullName, getUserInitials } from '../../utils/auth'
 import { 
   LayoutDashboard, Users, Building, Users2, UserCheck, 
   Calendar, FileText, TrendingUp, Settings, User, 
@@ -26,6 +28,7 @@ const navigation = [
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const { theme, toggleTheme, themeConfig, setTheme } = useTheme()
+  const { user, logout } = useAuth()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [profileMenuOpen, setProfileMenuOpen] = useState(false)
@@ -150,6 +153,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             </Link>
             
             <button
+              onClick={logout}
               className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-lg transition-colors hover:opacity-80"
               style={{ color: themeConfig.colors.text }}
             >
@@ -268,11 +272,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                   className="w-8 h-8 rounded-full flex items-center justify-center text-white font-medium"
                   style={{ backgroundColor: themeConfig.colors.primary }}
                 >
-                  JD
+                  {getUserInitials(user)}
                 </div>
                 <div className="hidden md:block text-left">
-                  <div className="text-sm font-medium">John Doe</div>
-                  <div className="text-xs opacity-70">Administrator</div>
+                  <div className="text-sm font-medium">{getUserFullName(user)}</div>
+                  <div className="text-xs opacity-70">{user?.role || 'Member'}</div>
                 </div>
                 <ChevronDown size={16} />
               </button>
@@ -290,10 +294,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     {/* User Info */}
                     <div className="px-3 py-2 border-b" style={{ borderColor: themeConfig.colors.divider }}>
                       <div className="text-sm font-medium" style={{ color: themeConfig.colors.text }}>
-                        John Doe
+                        {getUserFullName(user)}
                       </div>
                       <div className="text-xs" style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
-                        john.doe@church.com
+                        {user?.email || 'user@church.com'}
                       </div>
                     </div>
 
@@ -325,9 +329,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         className="flex items-center w-full px-3 py-2 text-sm rounded-lg hover:opacity-80 transition-opacity"
                         style={{ color: '#EF4444' }}
                         onClick={() => {
-                          // Handle logout
                           setProfileMenuOpen(false)
-                          console.log('Logging out...')
+                          logout()
                         }}
                       >
                         <LogOut size={16} className="mr-3" />

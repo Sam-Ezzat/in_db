@@ -1,12 +1,15 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { AuthProvider } from './contexts/AuthContext'
 import { Suspense, lazy } from 'react'
 import MainLayout from './components/Layout/MainLayout'
 import AuthLayout from './components/Layout/AuthLayout'
+import ProtectedRoute from './components/Auth/ProtectedRoute'
+import PublicRoute from './components/Auth/PublicRoute'
 import { 
   Login, Register, ForgotPassword, 
   ResetPassword
-} from './components/PlaceholderComponents'
+} from './pages/Auth'
 
 // Lazy load main pages
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -30,38 +33,64 @@ const LoadingSpinner = () => (
 function App() {
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-gray-50 text-gray-900 transition-colors duration-300">
-        <Suspense fallback={<LoadingSpinner />}>
-          <Routes>
-            {/* Auth routes */}
-            <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
-            <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
-            <Route path="/forgot-password" element={<AuthLayout><ForgotPassword /></AuthLayout>} />
-            <Route path="/reset-password" element={<AuthLayout><ResetPassword /></AuthLayout>} />
+      <AuthProvider>
+        <div className="min-h-screen bg-gray-50 text-gray-900 transition-colors duration-300">
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              {/* Auth routes - restricted for authenticated users */}
+              <Route path="/auth/login" element={
+                <PublicRoute restricted>
+                  <AuthLayout><Login /></AuthLayout>
+                </PublicRoute>
+              } />
+              <Route path="/auth/register" element={
+                <PublicRoute restricted>
+                  <AuthLayout><Register /></AuthLayout>
+                </PublicRoute>
+              } />
+              <Route path="/auth/forgot-password" element={
+                <PublicRoute restricted>
+                  <AuthLayout><ForgotPassword /></AuthLayout>
+                </PublicRoute>
+              } />
+              <Route path="/auth/reset-password" element={
+                <PublicRoute restricted>
+                  <AuthLayout><ResetPassword /></AuthLayout>
+                </PublicRoute>
+              } />
+              
+              {/* Legacy auth route redirects */}
+              <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+              <Route path="/register" element={<Navigate to="/auth/register" replace />} />
+              <Route path="/forgot-password" element={<Navigate to="/auth/forgot-password" replace />} />
+              <Route path="/reset-password" element={<Navigate to="/auth/reset-password" replace />} />
 
-            {/* Main application routes */}
-            <Route path="/*" element={
-              <MainLayout>
-                <Routes>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/people" element={<People />} />
-                  <Route path="/churches" element={<Churches />} />
-                  <Route path="/committees" element={<Committees />} />
-                  <Route path="/teams" element={<Teams />} />
-                  <Route path="/groups" element={<Groups />} />
-                  <Route path="/events" element={<Events />} />
-                  <Route path="/reports" element={<Reports />} />
-                  <Route path="/evaluations" element={<Evaluations />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                </Routes>
-              </MainLayout>
-            } />
-          </Routes>
-        </Suspense>
-      </div>
+              {/* Main application routes - protected */}
+              <Route path="/*" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/people" element={<People />} />
+                      <Route path="/churches" element={<Churches />} />
+                      <Route path="/committees" element={<Committees />} />
+                      <Route path="/teams" element={<Teams />} />
+                      <Route path="/groups" element={<Groups />} />
+                      <Route path="/events" element={<Events />} />
+                      <Route path="/reports" element={<Reports />} />
+                      <Route path="/evaluations" element={<Evaluations />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                    </Routes>
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </Suspense>
+        </div>
+      </AuthProvider>
     </ThemeProvider>
   )
 }
