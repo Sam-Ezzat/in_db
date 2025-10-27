@@ -34,6 +34,7 @@ const Evaluations = lazy(() => import('./pages/Evaluations'))
 const Search = lazy(() => import('./pages/Search'))
 const ExportImport = lazy(() => import('./pages/ExportImport'))
 const Notifications = lazy(() => import('./pages/Notifications'))
+const Financial = lazy(() => import('./pages/Financial'))
 const RoleManagement = lazy(() => import('./pages/RoleManagement'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Profile = lazy(() => import('./pages/Profile'))
@@ -125,6 +126,11 @@ function App() {
                         <Route path="/search" element={<Search />} />
                         <Route path="/export-import" element={<ExportImport />} />
                         <Route path="/notifications" element={<Notifications />} />
+                        <Route path="/financial" element={
+                          <RequirePermission resource="financial" action="view">
+                            <Financial />
+                          </RequirePermission>
+                        } />
                         <Route path="/role-management" element={<RoleManagement />} />
                         <Route path="/settings" element={<Settings />} />
                         <Route path="/profile" element={<Profile />} />

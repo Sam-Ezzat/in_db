@@ -172,6 +172,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'teams': ['view', 'create', 'update', 'delete', 'export', 'import'],
       'groups': ['view', 'create', 'update', 'delete', 'export', 'import'],
       'events': ['view', 'create', 'update', 'delete', 'export', 'import'],
+      'financial': ['view', 'create', 'update', 'delete', 'export', 'import'],
       'reports': ['view', 'create', 'export'],
       'evaluations': ['view', 'create', 'update', 'delete'],
       'notifications': ['view', 'send', 'manage_templates'],
@@ -190,6 +191,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'teams': ['view', 'create', 'update', 'delete'],
       'groups': ['view', 'create', 'update', 'delete'],
       'events': ['view', 'create', 'update', 'delete'],
+      'financial': ['view', 'create', 'update', 'export'],
       'reports': ['view', 'create'],
       'evaluations': ['view', 'create', 'update'],
       'notifications': ['view', 'send'],
@@ -207,6 +209,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'teams': ['view', 'update'],
       'groups': ['view', 'create', 'update', 'delete'],
       'events': ['view', 'create', 'update'],
+      'financial': ['view'],
       'reports': ['view'],
       'evaluations': ['view', 'create'],
       'notifications': ['view']
@@ -223,6 +226,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'teams': ['view'],
       'groups': ['view'],
       'events': ['view'],
+      'financial': ['view'],
       'reports': ['view'],
       'evaluations': ['view'],
       'notifications': ['view']
