@@ -1,8 +1,10 @@
 import { useTheme } from '../../contexts/ThemeContext'
+import { useNavigate } from 'react-router-dom'
 import { Search, Plus, MapPin, Users, Calendar, Building } from 'lucide-react'
 
 const Churches = () => {
   const { themeConfig } = useTheme()
+  const navigate = useNavigate()
 
   // Mock data - replace with real API call
   const churches = [
@@ -48,6 +50,7 @@ const Churches = () => {
           </p>
         </div>
         <button
+          onClick={() => navigate('/churches/new')}
           className="flex items-center px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
           style={{ backgroundColor: themeConfig.colors.primary }}
         >
@@ -88,6 +91,7 @@ const Churches = () => {
         {churches.map((church) => (
           <div 
             key={church.id}
+            onClick={() => navigate(`/churches/${church.id}`)}
             className="p-6 rounded-lg border hover:shadow-lg transition-shadow cursor-pointer"
             style={{ 
               backgroundColor: themeConfig.colors.secondary,
@@ -162,6 +166,10 @@ const Churches = () => {
             {/* Actions */}
             <div className="flex space-x-2 mt-4">
               <button 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  navigate(`/churches/${church.id}`)
+                }}
                 className="flex-1 py-2 px-3 rounded-lg border hover:opacity-80 transition-opacity text-sm font-medium"
                 style={{ 
                   borderColor: themeConfig.colors.divider,
@@ -171,6 +179,10 @@ const Churches = () => {
                 View Details
               </button>
               <button 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  navigate(`/churches/${church.id}/edit`)
+                }}
                 className="flex-1 py-2 px-3 rounded-lg text-white text-sm font-medium hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: themeConfig.colors.primary }}
               >
@@ -183,6 +195,7 @@ const Churches = () => {
 
       {/* Add New Church Card */}
       <div 
+        onClick={() => navigate('/churches/new')}
         className="mt-6 p-8 rounded-lg border-2 border-dashed hover:border-solid transition-all cursor-pointer"
         style={{ borderColor: themeConfig.colors.divider }}
       >
