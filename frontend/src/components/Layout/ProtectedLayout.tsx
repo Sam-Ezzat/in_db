@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { AccessControlProvider } from '../../hooks/useAccessControl'
+import { AccessControlProvider } from '../../contexts/AccessControlContext'
 import { useAuth } from '../../contexts/AuthContext'
 
 interface ProtectedLayoutProps {
@@ -19,7 +19,7 @@ const ProtectedLayout: React.FC<ProtectedLayoutProps> = ({ children }) => {
   }
 
   return (
-    <AccessControlProvider userId={user.id}>
+    <AccessControlProvider>
       {children}
     </AccessControlProvider>
   )

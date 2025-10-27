@@ -7,6 +7,7 @@ import AuthLayout from './components/Layout/AuthLayout'
 import ProtectedLayout from './components/Layout/ProtectedLayout'
 import ProtectedRoute from './components/Auth/ProtectedRoute'
 import PublicRoute from './components/Auth/PublicRoute'
+import RequirePermission from './components/Auth/RequirePermission'
 import { 
   Login, Register, ForgotPassword, 
   ResetPassword
@@ -85,10 +86,26 @@ function App() {
                     <MainLayout>
                       <Routes>
                         <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/people" element={<People />} />
-                        <Route path="/people/new" element={<PersonForm />} />
-                        <Route path="/people/:id" element={<PersonDetail />} />
-                        <Route path="/people/:id/edit" element={<PersonForm />} />
+                        <Route path="/people" element={
+                          <RequirePermission resource="people" action="view">
+                            <People />
+                          </RequirePermission>
+                        } />
+                        <Route path="/people/new" element={
+                          <RequirePermission resource="people" action="create">
+                            <PersonForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/people/:id" element={
+                          <RequirePermission resource="people" action="view">
+                            <PersonDetail />
+                          </RequirePermission>
+                        } />
+                        <Route path="/people/:id/edit" element={
+                          <RequirePermission resource="people" action="update">
+                            <PersonForm />
+                          </RequirePermission>
+                        } />
                         <Route path="/churches" element={<Churches />} />
                         <Route path="/churches/new" element={<ChurchForm />} />
                         <Route path="/churches/:id" element={<ChurchDetail />} />

@@ -131,6 +131,12 @@ class NotificationService {
   private notifications: Notification[] = []
   private templates: NotificationTemplate[] = []
   private preferences: Record<string, NotificationPreferences> = {}
+  private idCounter = 1
+
+  // Generate unique ID
+  private generateId(): string {
+    return `notification-${this.idCounter++}`
+  }
 
   // Get all notifications for a user
   getUserNotifications(userId: string, options?: {
@@ -181,7 +187,7 @@ class NotificationService {
     return new Promise((resolve) => {
       const newNotification: Notification = {
         ...notification,
-        id: Date.now().toString(),
+        id: this.generateId(),
         readBy: [],
         isRead: false,
         createdAt: new Date(),
@@ -205,12 +211,12 @@ class NotificationService {
       recipients.forEach(recipientId => {
         try {
           const notification: Notification = {
-            id: `${Date.now()}-${recipientId}`,
+            id: `${this.generateId()}-${recipientId}`,
             title: this.replaceVariables(options.title, options.variables),
             message: this.replaceVariables(options.message, options.variables),
             type: options.type,
             priority: options.priority,
-            category: options.category,
+            category: options.category as 'general' | 'event' | 'member' | 'financial' | 'system' | 'ministry',
             recipientType: 'individual',
             recipientIds: [recipientId],
             senderId: 'system',
@@ -296,7 +302,7 @@ class NotificationService {
     return new Promise((resolve) => {
       const newTemplate: NotificationTemplate = {
         ...template,
-        id: Date.now().toString(),
+        id: this.generateId(),
         createdAt: new Date(),
         updatedAt: new Date()
       }

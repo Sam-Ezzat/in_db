@@ -1,12 +1,13 @@
 import { useTheme } from '../../contexts/ThemeContext'
 import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Filter, Download, User } from 'lucide-react'
-import { ProtectedComponent, PermissionButton, usePermissions } from '../../hooks/useAccessControl'
+import { useAccess } from '../../contexts/AccessControlContext'
+import RequirePermission from '../../components/Auth/RequirePermission'
 
 const People = () => {
   const { themeConfig } = useTheme()
   const navigate = useNavigate()
-  const permissions = usePermissions()
+  const { can } = useAccess()
 
   // Mock data - replace with real API call
   const people = [
@@ -28,15 +29,7 @@ const People = () => {
             Manage all people in your church community
           </p>
         </div>
-        <ProtectedComponent 
-          resource="people" 
-          action="create"
-          fallback={
-            <div className="text-gray-500 text-sm italic">
-              You don't have permission to add people
-            </div>
-          }
-        >
+        {can('people', 'create') ? (
           <button
             onClick={() => navigate('/people/new')}
             className="flex items-center px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
@@ -45,7 +38,11 @@ const People = () => {
             <Plus size={20} className="mr-2" />
             Add Person
           </button>
-        </ProtectedComponent>
+        ) : (
+          <div className="text-gray-500 text-sm italic">
+            You don't have permission to add people
+          </div>
+        )}
       </div>
 
       {/* Search and Filters */}
@@ -84,18 +81,18 @@ const People = () => {
             <Filter size={20} className="mr-2" />
             Filters
           </button>
-          <PermissionButton
-            resource="people"
-            action="export"
-            className="flex items-center px-4 py-2 border rounded-lg hover:opacity-80 transition-opacity"
-            style={{ 
-              borderColor: themeConfig.colors.divider,
-              color: themeConfig.colors.text 
-            }}
-          >
-            <Download size={20} className="mr-2" />
-            Export
-          </PermissionButton>
+          {can('people', 'export') && (
+            <button
+              className="flex items-center px-4 py-2 border rounded-lg hover:opacity-80 transition-opacity"
+              style={{ 
+                borderColor: themeConfig.colors.divider,
+                color: themeConfig.colors.text 
+              }}
+            >
+              <Download size={20} className="mr-2" />
+              Export
+            </button>
+          )}
         </div>
       </div>
 
