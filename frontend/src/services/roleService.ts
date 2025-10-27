@@ -177,7 +177,9 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'evaluations': ['view', 'create', 'update', 'delete'],
       'notifications': ['view', 'send', 'manage_templates'],
       'settings': ['view', 'manage'],
-      'roles': ['view', 'create', 'update', 'delete', 'manage']
+      'roles': ['view', 'create', 'update', 'delete', 'manage'],
+      // Resources management
+      'resources': ['view', 'create', 'update', 'delete', 'export', 'import']
     }
   },
   {
@@ -196,6 +198,9 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'evaluations': ['view', 'create', 'update'],
       'notifications': ['view', 'send'],
       'settings': ['view']
+      ,
+      // Resources for Church Administrator
+      'resources': ['view', 'create', 'update', 'delete']
     }
   },
   {
@@ -213,6 +218,9 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'reports': ['view'],
       'evaluations': ['view', 'create'],
       'notifications': ['view']
+      ,
+      // Resources for Ministry Leader
+      'resources': ['view', 'create', 'update']
     }
   },
   {
@@ -230,6 +238,9 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'reports': ['view'],
       'evaluations': ['view'],
       'notifications': ['view']
+      ,
+      // Members can view resources
+      'resources': ['view']
     }
   },
   {

@@ -28,6 +28,8 @@ const Teams = lazy(() => import('./pages/Teams'))
 const TeamDetail = lazy(() => import('./pages/Teams/TeamDetail'))
 const TeamForm = lazy(() => import('./pages/Teams/TeamForm'))
 const Groups = lazy(() => import('./pages/Groups'))
+const GroupDetail = lazy(() => import('./pages/Groups/GroupDetail'))
+const GroupForm = lazy(() => import('./pages/Groups/GroupForm'))
 const Events = lazy(() => import('./pages/Events'))
 const Reports = lazy(() => import('./pages/Reports'))
 const Evaluations = lazy(() => import('./pages/Evaluations'))
@@ -35,6 +37,7 @@ const Search = lazy(() => import('./pages/Search'))
 const ExportImport = lazy(() => import('./pages/ExportImport'))
 const Notifications = lazy(() => import('./pages/Notifications'))
 const Financial = lazy(() => import('./pages/Financial'))
+const Resources = lazy(() => import('./pages/Resources'))
 const RoleManagement = lazy(() => import('./pages/RoleManagement'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Profile = lazy(() => import('./pages/Profile'))
@@ -119,7 +122,26 @@ function App() {
                         <Route path="/teams/new" element={<TeamForm />} />
                         <Route path="/teams/:id" element={<TeamDetail />} />
                         <Route path="/teams/:id/edit" element={<TeamForm />} />
-                        <Route path="/groups" element={<Groups />} />
+                        <Route path="/groups" element={
+                          <RequirePermission resource="groups" action="view">
+                            <Groups />
+                          </RequirePermission>
+                        } />
+                        <Route path="/groups/new" element={
+                          <RequirePermission resource="groups" action="create">
+                            <GroupForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/groups/:id" element={
+                          <RequirePermission resource="groups" action="view">
+                            <GroupDetail />
+                          </RequirePermission>
+                        } />
+                        <Route path="/groups/:id/edit" element={
+                          <RequirePermission resource="groups" action="update">
+                            <GroupForm />
+                          </RequirePermission>
+                        } />
                         <Route path="/events" element={<Events />} />
                         <Route path="/reports" element={<Reports />} />
                         <Route path="/evaluations" element={<Evaluations />} />
@@ -129,6 +151,11 @@ function App() {
                         <Route path="/financial" element={
                           <RequirePermission resource="financial" action="view">
                             <Financial />
+                          </RequirePermission>
+                        } />
+                        <Route path="/resources" element={
+                          <RequirePermission resource="resources" action="view">
+                            <Resources />
                           </RequirePermission>
                         } />
                         <Route path="/role-management" element={<RoleManagement />} />

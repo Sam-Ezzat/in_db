@@ -560,6 +560,21 @@ const systemPermissions: Omit<Permission, 'id' | 'createdAt' | 'updatedAt'>[] = 
   { name: 'View Financial', description: 'View financial information', resource: 'financial', action: 'read', scope: 'church', category: 'financial', isActive: true },
   { name: 'Manage Financial', description: 'Full financial management', resource: 'financial', action: 'manage', scope: 'global', category: 'financial', isActive: true },
   
+  // Resources
+  { name: 'View Resources', description: 'View resource information', resource: 'resources', action: 'view', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Create Resources', description: 'Create new resources', resource: 'resources', action: 'create', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Update Resources', description: 'Update resource information', resource: 'resources', action: 'update', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Delete Resources', description: 'Delete resources', resource: 'resources', action: 'delete', scope: 'church', category: 'admin', isActive: true },
+  { name: 'Manage Resource Bookings', description: 'Manage resource bookings and schedules', resource: 'resources', action: 'book', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Manage Resource Maintenance', description: 'Manage resource maintenance and repairs', resource: 'resources', action: 'maintain', scope: 'church', category: 'admin', isActive: true },
+  
+  // Groups
+  { name: 'View Groups', description: 'View group information', resource: 'groups', action: 'view', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Create Groups', description: 'Create new groups', resource: 'groups', action: 'create', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Update Groups', description: 'Update group information', resource: 'groups', action: 'update', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Delete Groups', description: 'Delete groups', resource: 'groups', action: 'delete', scope: 'church', category: 'admin', isActive: true },
+  { name: 'Manage Group Members', description: 'Add and remove group members', resource: 'groups', action: 'manage_members', scope: 'church', category: 'ministry', isActive: true },
+  
   // System Administration
   { name: 'User Management', description: 'Manage user accounts and roles', resource: 'users', action: 'manage', scope: 'global', category: 'admin', isActive: true },
   { name: 'System Settings', description: 'Modify system configuration', resource: 'system', action: 'manage', scope: 'global', category: 'admin', isActive: true },

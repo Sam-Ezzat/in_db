@@ -1,620 +1,421 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../../contexts/ThemeContext'
+import RequirePermission from '../../components/Auth/RequirePermission'
 import { 
   UsersIcon, AcademicCapIcon, CalendarIcon, 
   PlusIcon, MagnifyingGlassIcon, ClockIcon,
   MapPinIcon, UserIcon, EllipsisVerticalIcon,
-  PencilIcon, TrashIcon, ChartBarIcon
+  PencilIcon, TrashIcon, ChartBarIcon, EyeIcon,
+  FunnelIcon, ArrowsUpDownIcon
 } from '@heroicons/react/24/outline'
-
-interface Group {
-  id: string
-  name: string
-  description: string
-  category: 'bible-study' | 'discipleship' | 'youth' | 'seniors' | 'small-group' | 'ministry'
-  leader: string
-  members: number
-  maxMembers: number
-  meetingDay: string
-  meetingTime: string
-  location: string
-  status: 'active' | 'inactive' | 'paused'
-  progress: number
-  curriculum?: string
-  nextMeeting: string
-}
+import { groupService, type Group, type GroupSummary } from '../../services/groupService'
 
 const Groups: React.FC = () => {
+  const navigate = useNavigate()
   const { themeConfig } = useTheme()
+  
+  const [groups, setGroups] = useState<Group[]>([])
+  const [summary, setSummary] = useState<GroupSummary | null>(null)
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [selectedStatus, setSelectedStatus] = useState<string>('all')
+  const [sortBy, setSortBy] = useState<'name' | 'members' | 'status' | 'progress'>('name')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
-  // Mock data for groups
-  const groups: Group[] = [
-    {
-      id: '1',
-      name: 'New Believers Class',
-      description: 'Foundation course for new Christians covering basic beliefs and practices',
-      category: 'discipleship',
-      leader: 'Pastor John Smith',
-      members: 12,
-      maxMembers: 15,
-      meetingDay: 'Sunday',
-      meetingTime: '11:30 AM',
-      location: 'Room 101',
-      status: 'active',
-      progress: 65,
-      curriculum: 'Starting Point Series',
-      nextMeeting: '2024-01-14'
-    },
-    {
-      id: '2',
-      name: 'Young Adults Fellowship',
-      description: 'Community group for ages 18-30 focusing on life application and fellowship',
-      category: 'youth',
-      leader: 'Sarah Johnson',
-      members: 24,
-      maxMembers: 30,
-      meetingDay: 'Friday',
-      meetingTime: '7:00 PM',
-      location: 'Youth Center',
-      status: 'active',
-      progress: 40,
-      curriculum: 'Life Together Study',
-      nextMeeting: '2024-01-12'
-    },
-    {
-      id: '3',
-      name: 'Men\'s Bible Study',
-      description: 'Weekly study for men focusing on leadership and spiritual growth',
-      category: 'bible-study',
-      leader: 'David Brown',
-      members: 18,
-      maxMembers: 25,
-      meetingDay: 'Wednesday',
-      meetingTime: '6:30 AM',
-      location: 'Conference Room',
-      status: 'active',
-      progress: 80,
-      curriculum: 'Iron Sharpens Iron',
-      nextMeeting: '2024-01-10'
-    },
-    {
-      id: '4',
-      name: 'Women\'s Ministry',
-      description: 'Supportive community for women with childcare and fellowship',
-      category: 'ministry',
-      leader: 'Mary Wilson',
-      members: 32,
-      maxMembers: 40,
-      meetingDay: 'Thursday',
-      meetingTime: '10:00 AM',
-      location: 'Fellowship Hall',
-      status: 'active',
-      progress: 25,
-      curriculum: 'Proverbs 31 Study',
-      nextMeeting: '2024-01-11'
-    },
-    {
-      id: '5',
-      name: 'Senior Saints',
-      description: 'Fellowship and study group for members 65 and older',
-      category: 'seniors',
-      leader: 'Elder Robert Davis',
-      members: 16,
-      maxMembers: 20,
-      meetingDay: 'Tuesday',
-      meetingTime: '2:00 PM',
-      location: 'Senior Center',
-      status: 'active',
-      progress: 90,
-      curriculum: 'Psalms Study',
-      nextMeeting: '2024-01-09'
-    },
-    {
-      id: '6',
-      name: 'Marriage Enrichment',
-      description: 'Support group for married couples focusing on relationship building',
-      category: 'small-group',
-      leader: 'Tom & Lisa Anderson',
-      members: 8,
-      maxMembers: 12,
-      meetingDay: 'Saturday',
-      meetingTime: '7:00 PM',
-      location: 'Room 203',
-      status: 'paused',
-      progress: 45,
-      curriculum: 'Love & Respect Series',
-      nextMeeting: '2024-01-20'
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  const loadData = async () => {
+    try {
+      setLoading(true)
+      const [groupsData, summaryData] = await Promise.all([
+        groupService.getGroups({ churchId: '1' }),
+        groupService.getGroupSummary('1')
+      ])
+      setGroups(groupsData.groups)
+      setSummary(summaryData)
+    } catch (error) {
+      console.error('Error loading groups data:', error)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  const handleDeleteGroup = async (groupId: string) => {
+    if (confirm('Are you sure you want to delete this group? This action cannot be undone.')) {
+      try {
+        await groupService.deleteGroup(groupId)
+        await loadData() // Refresh data
+      } catch (error) {
+        console.error('Error deleting group:', error)
+      }
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'text-green-600 bg-green-100'
+      case 'inactive': return 'text-gray-600 bg-gray-100'
+      case 'paused': return 'text-yellow-600 bg-yellow-100'
+      case 'completed': return 'text-blue-600 bg-blue-100'
+      case 'planning': return 'text-purple-600 bg-purple-100'
+      default: return 'text-gray-600 bg-gray-100'
+    }
+  }
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'bible-study': return 'text-blue-600 bg-blue-100'
+      case 'discipleship': return 'text-green-600 bg-green-100'
+      case 'youth': return 'text-orange-600 bg-orange-100'
+      case 'seniors': return 'text-purple-600 bg-purple-100'
+      case 'small-group': return 'text-indigo-600 bg-indigo-100'
+      case 'ministry': return 'text-red-600 bg-red-100'
+      case 'fellowship': return 'text-pink-600 bg-pink-100'
+      case 'prayer': return 'text-teal-600 bg-teal-100'
+      case 'service': return 'text-amber-600 bg-amber-100'
+      default: return 'text-gray-600 bg-gray-100'
+    }
+  }
+
+  // Filter and sort groups
+  const filteredAndSortedGroups = groups
+    .filter(group => {
+      const matchesSearch = !searchTerm || 
+        group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        group.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        group.leaderName.toLowerCase().includes(searchTerm.toLowerCase())
+      
+      const matchesCategory = selectedCategory === 'all' || group.category === selectedCategory
+      const matchesStatus = selectedStatus === 'all' || group.status === selectedStatus
+      
+      return matchesSearch && matchesCategory && matchesStatus
+    })
+    .sort((a, b) => {
+      let aValue, bValue
+      
+      switch (sortBy) {
+        case 'name':
+          aValue = a.name.toLowerCase()
+          bValue = b.name.toLowerCase()
+          break
+        case 'members':
+          aValue = a.currentSize
+          bValue = b.currentSize
+          break
+        case 'status':
+          aValue = a.status
+          bValue = b.status
+          break
+        case 'progress':
+          aValue = a.progress.completionRate
+          bValue = b.progress.completionRate
+          break
+        default:
+          return 0
+      }
+      
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1
+      return 0
+    })
 
   const categories = [
-    { value: 'all', label: 'All Groups' },
+    { value: 'all', label: 'All Categories' },
     { value: 'bible-study', label: 'Bible Study' },
     { value: 'discipleship', label: 'Discipleship' },
     { value: 'youth', label: 'Youth' },
     { value: 'seniors', label: 'Seniors' },
-    { value: 'small-group', label: 'Small Groups' },
-    { value: 'ministry', label: 'Ministry' }
+    { value: 'small-group', label: 'Small Group' },
+    { value: 'ministry', label: 'Ministry' },
+    { value: 'fellowship', label: 'Fellowship' },
+    { value: 'prayer', label: 'Prayer' },
+    { value: 'service', label: 'Service' }
   ]
 
-  const getCategoryColor = (category: string) => {
-    const colors = {
-      'bible-study': { bg: '#3B82F6', text: '#FFFFFF' },
-      'discipleship': { bg: '#10B981', text: '#FFFFFF' },
-      'youth': { bg: '#8B5CF6', text: '#FFFFFF' },
-      'seniors': { bg: '#F59E0B', text: '#FFFFFF' },
-      'small-group': { bg: '#EC4899', text: '#FFFFFF' },
-      'ministry': { bg: '#6366F1', text: '#FFFFFF' }
-    }
-    return colors[category as keyof typeof colors] || { bg: '#6B7280', text: '#FFFFFF' }
+  const statuses = [
+    { value: 'all', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'planning', label: 'Planning' },
+    { value: 'paused', label: 'Paused' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'inactive', label: 'Inactive' }
+  ]
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    )
   }
-
-  const getStatusColor = (status: string) => {
-    const colors = {
-      active: { bg: '#10B981', text: '#FFFFFF' },
-      inactive: { bg: '#6B7280', text: '#FFFFFF' },
-      paused: { bg: '#F59E0B', text: '#FFFFFF' }
-    }
-    return colors[status as keyof typeof colors] || colors.active
-  }
-
-  const getProgressColor = (progress: number) => {
-    if (progress >= 80) return '#10B981' // Green
-    if (progress >= 60) return '#3B82F6' // Blue
-    if (progress >= 40) return '#F59E0B' // Yellow
-    return '#EF4444' // Red
-  }
-
-  const filteredGroups = groups.filter(group => {
-    const matchesSearch = group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         group.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         group.leader.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === 'all' || group.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
-
-  const totalMembers = groups.reduce((sum, group) => sum + group.members, 0)
-  const activeGroups = groups.filter(group => group.status === 'active').length
-  const averageProgress = Math.round(groups.reduce((sum, group) => sum + group.progress, 0) / groups.length)
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 
-              className="text-3xl font-bold"
-              style={{ color: themeConfig.colors.text }}
-            >
-              Groups & Discipleship
-            </h1>
-            <p 
-              className="mt-2"
-              style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-            >
-              Manage discipleship groups, small groups, and ministry teams
-            </p>
-          </div>
-          <button
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
-            style={{ 
-              backgroundColor: themeConfig.colors.primary,
-              boxShadow: `0 0 0 3px ${themeConfig.colors.primary}20`
-            }}
-          >
-            <PlusIcon className="h-4 w-4 mr-2" />
-            New Group
-          </button>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Groups</h1>
+          <p className="text-gray-500">Manage discipleship groups and ministry teams</p>
         </div>
+        <RequirePermission resource="groups" action="create">
+          <button
+            onClick={() => navigate('/groups/new')}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+          >
+            <PlusIcon className="h-5 w-5" />
+            <span>New Group</span>
+          </button>
+        </RequirePermission>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div 
-          className="rounded-lg border p-6"
-          style={{
-            backgroundColor: themeConfig.colors.secondary,
-            borderColor: themeConfig.colors.divider
-          }}
-        >
-          <div className="flex items-center">
-            <div 
-              className="p-2 rounded-lg"
-              style={{ backgroundColor: themeConfig.colors.primary + '20' }}
-            >
-              <UsersIcon 
-                className="h-6 w-6" 
-                style={{ color: themeConfig.colors.primary }} 
+      {/* Summary Cards */}
+      {summary && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className={`${themeConfig.cardBackground} rounded-lg p-4`}>
+            <div className="flex items-center">
+              <UsersIcon className="h-8 w-8 text-blue-600" />
+              <div className="ml-3">
+                <p className="text-sm font-medium text-gray-600">Total Groups</p>
+                <p className="text-2xl font-bold text-gray-900">{summary.totalGroups}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className={`${themeConfig.cardBackground} rounded-lg p-4`}>
+            <div className="flex items-center">
+              <AcademicCapIcon className="h-8 w-8 text-green-600" />
+              <div className="ml-3">
+                <p className="text-sm font-medium text-gray-600">Active Groups</p>
+                <p className="text-2xl font-bold text-gray-900">{summary.activeGroups}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className={`${themeConfig.cardBackground} rounded-lg p-4`}>
+            <div className="flex items-center">
+              <UserIcon className="h-8 w-8 text-purple-600" />
+              <div className="ml-3">
+                <p className="text-sm font-medium text-gray-600">Total Members</p>
+                <p className="text-2xl font-bold text-gray-900">{summary.totalMembers}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className={`${themeConfig.cardBackground} rounded-lg p-4`}>
+            <div className="flex items-center">
+              <ChartBarIcon className="h-8 w-8 text-orange-600" />
+              <div className="ml-3">
+                <p className="text-sm font-medium text-gray-600">Avg. Attendance</p>
+                <p className="text-2xl font-bold text-gray-900">{summary.attendanceRate}%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Filters and Search */}
+      <div className={`${themeConfig.cardBackground} rounded-lg p-4`}>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:space-x-4">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <div className="relative">
+              <MagnifyingGlassIcon className="h-5 w-5 absolute left-3 top-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search groups..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-64"
               />
             </div>
-            <div className="ml-4">
-              <p 
-                className="text-sm font-medium"
-                style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-              >
-                Total Groups
-              </p>
-              <p 
-                className="text-2xl font-bold"
-                style={{ color: themeConfig.colors.text }}
-              >
-                {groups.length}
-              </p>
-            </div>
-          </div>
-        </div>
+            
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {categories.map((category) => (
+                <option key={category.value} value={category.value}>
+                  {category.label}
+                </option>
+              ))}
+            </select>
 
-        <div 
-          className="rounded-lg border p-6"
-          style={{
-            backgroundColor: themeConfig.colors.secondary,
-            borderColor: themeConfig.colors.divider
-          }}
-        >
-          <div className="flex items-center">
-            <div className="p-2 rounded-lg bg-green-500 bg-opacity-10">
-              <UserIcon className="h-6 w-6 text-green-500" />
-            </div>
-            <div className="ml-4">
-              <p 
-                className="text-sm font-medium"
-                style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-              >
-                Total Members
-              </p>
-              <p 
-                className="text-2xl font-bold"
-                style={{ color: themeConfig.colors.text }}
-              >
-                {totalMembers}
-              </p>
-            </div>
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {statuses.map((status) => (
+                <option key={status.value} value={status.value}>
+                  {status.label}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
 
-        <div 
-          className="rounded-lg border p-6"
-          style={{
-            backgroundColor: themeConfig.colors.secondary,
-            borderColor: themeConfig.colors.divider
-          }}
-        >
-          <div className="flex items-center">
-            <div className="p-2 rounded-lg bg-blue-500 bg-opacity-10">
-              <AcademicCapIcon className="h-6 w-6 text-blue-500" />
-            </div>
-            <div className="ml-4">
-              <p 
-                className="text-sm font-medium"
-                style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-              >
-                Active Groups
-              </p>
-              <p 
-                className="text-2xl font-bold"
-                style={{ color: themeConfig.colors.text }}
-              >
-                {activeGroups}
-              </p>
-            </div>
+          <div className="flex items-center space-x-2">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="name">Sort by Name</option>
+              <option value="members">Sort by Members</option>
+              <option value="status">Sort by Status</option>
+              <option value="progress">Sort by Progress</option>
+            </select>
+            
+            <button
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              <ArrowsUpDownIcon className="h-4 w-4" />
+            </button>
           </div>
-        </div>
-
-        <div 
-          className="rounded-lg border p-6"
-          style={{
-            backgroundColor: themeConfig.colors.secondary,
-            borderColor: themeConfig.colors.divider
-          }}
-        >
-          <div className="flex items-center">
-            <div className="p-2 rounded-lg bg-purple-500 bg-opacity-10">
-              <ChartBarIcon className="h-6 w-6 text-purple-500" />
-            </div>
-            <div className="ml-4">
-              <p 
-                className="text-sm font-medium"
-                style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-              >
-                Avg Progress
-              </p>
-              <p 
-                className="text-2xl font-bold"
-                style={{ color: themeConfig.colors.text }}
-              >
-                {averageProgress}%
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        {/* Search */}
-        <div className="relative flex-1">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon 
-              className="h-5 w-5" 
-              style={{ color: themeConfig.colors.text, opacity: 0.5 }} 
-            />
-          </div>
-          <input
-            type="text"
-            placeholder="Search groups..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full pl-10 pr-3 py-2 border rounded-md leading-5 focus:outline-none focus:ring-1 sm:text-sm"
-            style={{
-              backgroundColor: themeConfig.colors.secondary,
-              borderColor: themeConfig.colors.divider,
-              color: themeConfig.colors.text
-            }}
-          />
-        </div>
-
-        {/* Category Filter */}
-        <div className="relative">
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="block w-full pl-3 pr-10 py-2 text-base border focus:outline-none focus:ring-1 sm:text-sm rounded-md"
-            style={{
-              backgroundColor: themeConfig.colors.secondary,
-              borderColor: themeConfig.colors.divider,
-              color: themeConfig.colors.text
-            }}
-          >
-            {categories.map((category) => (
-              <option key={category.value} value={category.value}>
-                {category.label}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
 
       {/* Groups Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredGroups.map((group) => (
-          <div
-            key={group.id}
-            className="border rounded-lg p-6 hover:shadow-md transition-shadow"
-            style={{
-              backgroundColor: themeConfig.colors.secondary,
-              borderColor: themeConfig.colors.divider
-            }}
-          >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredAndSortedGroups.map((group) => (
+          <div key={group.id} className={`${themeConfig.cardBackground} rounded-lg p-6 hover:shadow-lg transition-shadow`}>
             {/* Group Header */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 
-                    className="font-semibold text-lg"
-                    style={{ color: themeConfig.colors.text }}
-                  >
-                    {group.name}
-                  </h3>
-                  <span 
-                    className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
-                    style={{
-                      backgroundColor: getCategoryColor(group.category).bg,
-                      color: getCategoryColor(group.category).text
-                    }}
-                  >
-                    {group.category.replace('-', ' ')}
-                  </span>
-                  <span 
-                    className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
-                    style={{
-                      backgroundColor: getStatusColor(group.status).bg,
-                      color: getStatusColor(group.status).text
-                    }}
-                  >
-                    {group.status}
-                  </span>
-                </div>
-                <p 
-                  className="text-sm mb-3"
-                  style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                >
-                  {group.description}
-                </p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">{group.name}</h3>
+                <p className="text-sm text-gray-600 line-clamp-2">{group.description}</p>
               </div>
-              <div className="flex items-center space-x-1">
-                <button
-                  className="p-2 hover:opacity-70"
-                  style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                  title="Edit Group"
-                >
-                  <PencilIcon className="h-4 w-4" />
+              <div className="ml-2">
+                <button className="p-1 hover:bg-gray-100 rounded">
+                  <EllipsisVerticalIcon className="h-5 w-5 text-gray-400" />
                 </button>
-                <button
-                  className="p-2 hover:opacity-70"
-                  style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                  title="More Options"
-                >
-                  <EllipsisVerticalIcon className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-1">
-                <span 
-                  className="text-sm font-medium"
-                  style={{ color: themeConfig.colors.text }}
-                >
-                  {group.curriculum || 'Curriculum Progress'}
-                </span>
-                <span 
-                  className="text-sm font-medium"
-                  style={{ color: themeConfig.colors.text }}
-                >
-                  {group.progress}%
-                </span>
-              </div>
-              <div 
-                className="w-full bg-gray-200 rounded-full h-2"
-                style={{ backgroundColor: themeConfig.colors.divider }}
-              >
-                <div 
-                  className="h-2 rounded-full transition-all duration-300"
-                  style={{ 
-                    width: `${group.progress}%`,
-                    backgroundColor: getProgressColor(group.progress)
-                  }}
-                />
               </div>
             </div>
 
             {/* Group Details */}
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <UserIcon 
-                    className="h-4 w-4" 
-                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                  />
-                  <span style={{ color: themeConfig.colors.text }}>
-                    Leader: {group.leader}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <UsersIcon 
-                    className="h-4 w-4" 
-                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                  />
-                  <span style={{ color: themeConfig.colors.text }}>
-                    {group.members}/{group.maxMembers} members
-                  </span>
-                </div>
+            <div className="space-y-3 mb-4">
+              <div className="flex items-center justify-between">
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(group.category)}`}>
+                  {group.category.charAt(0).toUpperCase() + group.category.slice(1).replace('-', ' ')}
+                </span>
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(group.status)}`}>
+                  {group.status.charAt(0).toUpperCase() + group.status.slice(1)}
+                </span>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <ClockIcon 
-                    className="h-4 w-4" 
-                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                  />
-                  <span style={{ color: themeConfig.colors.text }}>
-                    {group.meetingDay} {group.meetingTime}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPinIcon 
-                    className="h-4 w-4" 
-                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                  />
-                  <span style={{ color: themeConfig.colors.text }}>
-                    {group.location}
-                  </span>
-                </div>
+
+              <div className="flex items-center text-sm text-gray-600">
+                <UserIcon className="h-4 w-4 mr-2" />
+                <span>{group.leaderName}</span>
+              </div>
+
+              <div className="flex items-center text-sm text-gray-600">
+                <UsersIcon className="h-4 w-4 mr-2" />
+                <span>{group.currentSize}/{group.maxMembers} members</span>
+              </div>
+
+              <div className="flex items-center text-sm text-gray-600">
+                <CalendarIcon className="h-4 w-4 mr-2" />
+                <span>
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][group.schedule.dayOfWeek]} at {group.schedule.time}
+                </span>
+              </div>
+
+              <div className="flex items-center text-sm text-gray-600">
+                <MapPinIcon className="h-4 w-4 mr-2" />
+                <span>{group.location}</span>
+              </div>
+
+              <div className="flex items-center text-sm text-gray-600">
+                <ClockIcon className="h-4 w-4 mr-2" />
+                <span>{group.schedule.duration} minutes</span>
               </div>
             </div>
 
-            {/* Next Meeting */}
-            <div 
-              className="mt-4 pt-4 border-t"
-              style={{ borderColor: themeConfig.colors.divider }}
-            >
-              <div className="flex items-center gap-2">
-                <CalendarIcon 
-                  className="h-4 w-4" 
-                  style={{ color: themeConfig.colors.primary }}
-                />
-                <span 
-                  className="text-sm font-medium"
-                  style={{ color: themeConfig.colors.text }}
-                >
-                  Next Meeting: {new Date(group.nextMeeting).toLocaleDateString()}
-                </span>
+            {/* Progress Bar */}
+            {group.curriculum && (
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-medium text-gray-700">Progress</span>
+                  <span className="text-xs text-gray-500">{group.progress.completionRate.toFixed(0)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full" 
+                    style={{ width: `${group.progress.completionRate}%` }}
+                  ></div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Session {group.progress.currentSession} of {group.progress.totalSessions}
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+              <button
+                onClick={() => navigate(`/groups/${group.id}`)}
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center space-x-1"
+              >
+                <EyeIcon className="h-4 w-4" />
+                <span>View Details</span>
+              </button>
+              
+              <div className="flex items-center space-x-2">
+                <RequirePermission resource="groups" action="update">
+                  <button
+                    onClick={() => navigate(`/groups/${group.id}/edit`)}
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                  </button>
+                </RequirePermission>
+                
+                <RequirePermission resource="groups" action="delete">
+                  <button
+                    onClick={() => handleDeleteGroup(group.id)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                </RequirePermission>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Activity Feed Section */}
-      <div 
-        className="mt-8 rounded-lg border p-6"
-        style={{
-          backgroundColor: themeConfig.colors.secondary,
-          borderColor: themeConfig.colors.divider
-        }}
-      >
-        <h3 
-          className="text-lg font-semibold mb-4"
-          style={{ color: themeConfig.colors.text }}
-        >
-          Recent Activity
-        </h3>
-        <div className="space-y-3">
-          <div className="flex items-start gap-3">
-            <div 
-              className="w-2 h-2 rounded-full mt-2"
-              style={{ backgroundColor: themeConfig.colors.primary }}
-            />
-            <div>
-              <p 
-                className="text-sm"
-                style={{ color: themeConfig.colors.text }}
+      {/* Empty State */}
+      {filteredAndSortedGroups.length === 0 && (
+        <div className="text-center py-12">
+          <UsersIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {searchTerm || selectedCategory !== 'all' || selectedStatus !== 'all' 
+              ? 'No groups found' 
+              : 'No groups yet'
+            }
+          </h3>
+          <p className="text-gray-500 mb-6">
+            {searchTerm || selectedCategory !== 'all' || selectedStatus !== 'all'
+              ? 'Try adjusting your search or filter criteria.'
+              : 'Get started by creating your first group.'
+            }
+          </p>
+          {(!searchTerm && selectedCategory === 'all' && selectedStatus === 'all') && (
+            <RequirePermission resource="groups" action="create">
+              <button
+                onClick={() => navigate('/groups/new')}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
               >
-                <span className="font-medium">New Believers Class</span> completed Chapter 3: Prayer Fundamentals
-              </p>
-              <p 
-                className="text-xs mt-1"
-                style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-              >
-                2 hours ago
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <div 
-              className="w-2 h-2 rounded-full mt-2"
-              style={{ backgroundColor: '#10B981' }}
-            />
-            <div>
-              <p 
-                className="text-sm"
-                style={{ color: themeConfig.colors.text }}
-              >
-                <span className="font-medium">John Doe</span> joined Young Adults Fellowship
-              </p>
-              <p 
-                className="text-xs mt-1"
-                style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-              >
-                1 day ago
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <div 
-              className="w-2 h-2 rounded-full mt-2"
-              style={{ backgroundColor: '#F59E0B' }}
-            />
-            <div>
-              <p 
-                className="text-sm"
-                style={{ color: themeConfig.colors.text }}
-              >
-                <span className="font-medium">Men's Bible Study</span> reached 80% curriculum completion
-              </p>
-              <p 
-                className="text-xs mt-1"
-                style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-              >
-                3 days ago
-              </p>
-            </div>
-          </div>
+                Create First Group
+              </button>
+            </RequirePermission>
+          )}
         </div>
-      </div>
+      )}
     </div>
   )
 }
