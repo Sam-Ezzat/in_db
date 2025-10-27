@@ -20,6 +20,8 @@ const Churches = lazy(() => import('./pages/Churches'))
 const ChurchDetail = lazy(() => import('./pages/Churches/ChurchDetail'))
 const ChurchForm = lazy(() => import('./pages/Churches/ChurchForm'))
 const Committees = lazy(() => import('./pages/Committees'))
+const CommitteeDetail = lazy(() => import('./pages/Committees/CommitteeDetail'))
+const CommitteeForm = lazy(() => import('./pages/Committees/CommitteeForm'))
 const Teams = lazy(() => import('./pages/Teams'))
 const TeamDetail = lazy(() => import('./pages/Teams/TeamDetail'))
 const TeamForm = lazy(() => import('./pages/Teams/TeamForm'))
@@ -86,6 +88,9 @@ function App() {
                       <Route path="/churches/:id" element={<ChurchDetail />} />
                       <Route path="/churches/:id/edit" element={<ChurchForm />} />
                       <Route path="/committees" element={<Committees />} />
+                      <Route path="/committees/new" element={<CommitteeForm />} />
+                      <Route path="/committees/:id" element={<CommitteeDetail />} />
+                      <Route path="/committees/:id/edit" element={<CommitteeForm />} />
                       <Route path="/teams" element={<Teams />} />
                       <Route path="/teams/new" element={<TeamForm />} />
                       <Route path="/teams/:id" element={<TeamDetail />} />

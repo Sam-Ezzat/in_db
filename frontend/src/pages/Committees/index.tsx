@@ -1,8 +1,10 @@
 import { useTheme } from '../../contexts/ThemeContext'
+import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Users, User, Building, FileText, ChevronRight } from 'lucide-react'
 
 const Committees = () => {
   const { themeConfig } = useTheme()
+  const navigate = useNavigate()
 
   // Mock data - replace with real API call
   const committees = [
@@ -75,6 +77,7 @@ const Committees = () => {
           </p>
         </div>
         <button
+          onClick={() => navigate('/committees/new')}
           className="flex items-center px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
           style={{ backgroundColor: themeConfig.colors.primary }}
         >
@@ -144,6 +147,7 @@ const Committees = () => {
         {committees.map((committee) => (
           <div 
             key={committee.id}
+            onClick={() => navigate(`/committees/${committee.id}`)}
             className="p-6 rounded-lg border hover:shadow-lg transition-shadow cursor-pointer"
             style={{ 
               backgroundColor: themeConfig.colors.secondary,
