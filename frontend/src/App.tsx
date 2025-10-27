@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { Suspense, lazy } from 'react'
 import MainLayout from './components/Layout/MainLayout'
 import AuthLayout from './components/Layout/AuthLayout'
+import ProtectedLayout from './components/Layout/ProtectedLayout'
 import ProtectedRoute from './components/Auth/ProtectedRoute'
 import PublicRoute from './components/Auth/PublicRoute'
 import { 
@@ -30,6 +31,9 @@ const Events = lazy(() => import('./pages/Events'))
 const Reports = lazy(() => import('./pages/Reports'))
 const Evaluations = lazy(() => import('./pages/Evaluations'))
 const Search = lazy(() => import('./pages/Search'))
+const ExportImport = lazy(() => import('./pages/ExportImport'))
+const Notifications = lazy(() => import('./pages/Notifications'))
+const RoleManagement = lazy(() => import('./pages/RoleManagement'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Profile = lazy(() => import('./pages/Profile'))
 
@@ -77,36 +81,41 @@ function App() {
               {/* Main application routes - protected */}
               <Route path="/*" element={
                 <ProtectedRoute>
-                  <MainLayout>
-                    <Routes>
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/people" element={<People />} />
-                      <Route path="/people/new" element={<PersonForm />} />
-                      <Route path="/people/:id" element={<PersonDetail />} />
-                      <Route path="/people/:id/edit" element={<PersonForm />} />
-                      <Route path="/churches" element={<Churches />} />
-                      <Route path="/churches/new" element={<ChurchForm />} />
-                      <Route path="/churches/:id" element={<ChurchDetail />} />
-                      <Route path="/churches/:id/edit" element={<ChurchForm />} />
-                      <Route path="/committees" element={<Committees />} />
-                      <Route path="/committees/new" element={<CommitteeForm />} />
-                      <Route path="/committees/:id" element={<CommitteeDetail />} />
-                      <Route path="/committees/:id/edit" element={<CommitteeForm />} />
-                      <Route path="/teams" element={<Teams />} />
-                      <Route path="/teams/new" element={<TeamForm />} />
-                      <Route path="/teams/:id" element={<TeamDetail />} />
-                      <Route path="/teams/:id/edit" element={<TeamForm />} />
-                      <Route path="/groups" element={<Groups />} />
-                      <Route path="/events" element={<Events />} />
-                      <Route path="/reports" element={<Reports />} />
-                      <Route path="/evaluations" element={<Evaluations />} />
-                      <Route path="/search" element={<Search />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="/profile" element={<Profile />} />
-                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                      <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                    </Routes>
-                  </MainLayout>
+                  <ProtectedLayout>
+                    <MainLayout>
+                      <Routes>
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/people" element={<People />} />
+                        <Route path="/people/new" element={<PersonForm />} />
+                        <Route path="/people/:id" element={<PersonDetail />} />
+                        <Route path="/people/:id/edit" element={<PersonForm />} />
+                        <Route path="/churches" element={<Churches />} />
+                        <Route path="/churches/new" element={<ChurchForm />} />
+                        <Route path="/churches/:id" element={<ChurchDetail />} />
+                        <Route path="/churches/:id/edit" element={<ChurchForm />} />
+                        <Route path="/committees" element={<Committees />} />
+                        <Route path="/committees/new" element={<CommitteeForm />} />
+                        <Route path="/committees/:id" element={<CommitteeDetail />} />
+                        <Route path="/committees/:id/edit" element={<CommitteeForm />} />
+                        <Route path="/teams" element={<Teams />} />
+                        <Route path="/teams/new" element={<TeamForm />} />
+                        <Route path="/teams/:id" element={<TeamDetail />} />
+                        <Route path="/teams/:id/edit" element={<TeamForm />} />
+                        <Route path="/groups" element={<Groups />} />
+                        <Route path="/events" element={<Events />} />
+                        <Route path="/reports" element={<Reports />} />
+                        <Route path="/evaluations" element={<Evaluations />} />
+                        <Route path="/search" element={<Search />} />
+                        <Route path="/export-import" element={<ExportImport />} />
+                        <Route path="/notifications" element={<Notifications />} />
+                        <Route path="/role-management" element={<RoleManagement />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                      </Routes>
+                    </MainLayout>
+                  </ProtectedLayout>
                 </ProtectedRoute>
               } />
             </Routes>

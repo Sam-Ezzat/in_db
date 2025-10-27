@@ -7,7 +7,7 @@ import QuickSearch from '../Search/QuickSearch'
 import { 
   LayoutDashboard, Users, Building, Users2, UserCheck, 
   Calendar, FileText, TrendingUp, Settings, User, 
-  LogOut, Palette, Menu, X, ChevronDown, Bell, Search
+  LogOut, Palette, Menu, X, ChevronDown, Bell, Search, Download, Shield
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
@@ -26,6 +26,9 @@ const navigation = [
   { name: 'Reports', href: '/reports', icon: FileText },
   { name: 'Evaluations', href: '/evaluations', icon: TrendingUp },
   { name: 'Search', href: '/search', icon: Search },
+  { name: 'Export/Import', href: '/export-import', icon: Download },
+  { name: 'Notifications', href: '/notifications', icon: Bell },
+  { name: 'Role Management', href: '/role-management', icon: Shield },
 ]
 
 const MainLayout = ({ children }: MainLayoutProps) => {
