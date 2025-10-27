@@ -29,6 +29,7 @@ const Groups = lazy(() => import('./pages/Groups'))
 const Events = lazy(() => import('./pages/Events'))
 const Reports = lazy(() => import('./pages/Reports'))
 const Evaluations = lazy(() => import('./pages/Evaluations'))
+const Search = lazy(() => import('./pages/Search'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Profile = lazy(() => import('./pages/Profile'))
 
@@ -99,6 +100,7 @@ function App() {
                       <Route path="/events" element={<Events />} />
                       <Route path="/reports" element={<Reports />} />
                       <Route path="/evaluations" element={<Evaluations />} />
+                      <Route path="/search" element={<Search />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/" element={<Navigate to="/dashboard" replace />} />

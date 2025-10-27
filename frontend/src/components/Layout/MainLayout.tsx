@@ -3,10 +3,11 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../../contexts/ThemeContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { getUserFullName, getUserInitials } from '../../utils/auth'
+import QuickSearch from '../Search/QuickSearch'
 import { 
   LayoutDashboard, Users, Building, Users2, UserCheck, 
   Calendar, FileText, TrendingUp, Settings, User, 
-  LogOut, Palette, Menu, X, ChevronDown, Bell
+  LogOut, Palette, Menu, X, ChevronDown, Bell, Search
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
@@ -24,6 +25,7 @@ const navigation = [
   { name: 'Events', href: '/events', icon: Calendar },
   { name: 'Reports', href: '/reports', icon: FileText },
   { name: 'Evaluations', href: '/evaluations', icon: TrendingUp },
+  { name: 'Search', href: '/search', icon: Search },
 ]
 
 const MainLayout = ({ children }: MainLayoutProps) => {
@@ -183,6 +185,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <h1 className="text-lg font-semibold lg:hidden" style={{ color: themeConfig.colors.text }}>
               Church Management
             </h1>
+          </div>
+
+          {/* Center - Search Bar (hidden on mobile) */}
+          <div className="hidden md:block flex-1 max-w-md mx-8">
+            <QuickSearch />
           </div>
 
           {/* Right side - Notifications and Profile */}
