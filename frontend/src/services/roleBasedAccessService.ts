@@ -548,9 +548,13 @@ const systemPermissions: Omit<Permission, 'id' | 'createdAt' | 'updatedAt'>[] = 
   { name: 'Manage Churches', description: 'Create and modify church information', resource: 'churches', action: 'manage', scope: 'global', category: 'admin', isActive: true },
   
   // Events
-  { name: 'View Events', description: 'View event information', resource: 'events', action: 'read', scope: 'global', category: 'core', isActive: true },
+  { name: 'View Events', description: 'View event information', resource: 'events', action: 'view', scope: 'church', category: 'ministry', isActive: true },
   { name: 'Create Events', description: 'Create new events', resource: 'events', action: 'create', scope: 'church', category: 'ministry', isActive: true },
-  { name: 'Manage Events', description: 'Full event management', resource: 'events', action: 'manage', scope: 'global', category: 'admin', isActive: true },
+  { name: 'Update Events', description: 'Update event information', resource: 'events', action: 'update', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Delete Events', description: 'Delete events', resource: 'events', action: 'delete', scope: 'church', category: 'admin', isActive: true },
+  { name: 'Manage Event Registrations', description: 'Manage event registrations and attendees', resource: 'events', action: 'manage_registrations', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Record Event Attendance', description: 'Record and manage event attendance', resource: 'events', action: 'record_attendance', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'View Event Analytics', description: 'View event analytics and reports', resource: 'events', action: 'view_analytics', scope: 'church', category: 'ministry', isActive: true },
   
   // Reports
   { name: 'View Reports', description: 'Access basic reports', resource: 'reports', action: 'read', scope: 'church', category: 'core', isActive: true },

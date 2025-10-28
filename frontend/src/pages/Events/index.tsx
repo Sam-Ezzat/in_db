@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../../contexts/ThemeContext'
 import { 
   CalendarIcon, ClockIcon, MapPinIcon, UserIcon, 
@@ -25,6 +26,7 @@ interface Event {
 
 const Events: React.FC = () => {
   const { themeConfig } = useTheme()
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
@@ -145,6 +147,7 @@ const Events: React.FC = () => {
             </p>
           </div>
           <button
+            onClick={() => navigate('/events/new')}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
             style={{ 
               backgroundColor: themeConfig.colors.primary,
@@ -401,9 +404,10 @@ const Events: React.FC = () => {
                       {event.status}
                     </span>
                     <button
+                      onClick={() => navigate(`/events/${event.id}`)}
                       className="p-2 hover:opacity-70"
                       style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                      title="Edit Event"
+                      title="View Event"
                     >
                       <PencilIcon className="h-4 w-4" />
                     </button>

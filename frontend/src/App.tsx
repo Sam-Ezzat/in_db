@@ -31,6 +31,8 @@ const Groups = lazy(() => import('./pages/Groups'))
 const GroupDetail = lazy(() => import('./pages/Groups/GroupDetail'))
 const GroupForm = lazy(() => import('./pages/Groups/GroupForm'))
 const Events = lazy(() => import('./pages/Events'))
+const EventDetail = lazy(() => import('./pages/Events/EventDetail'))
+const EventForm = lazy(() => import('./pages/Events/EventForm'))
 const Reports = lazy(() => import('./pages/Reports'))
 const Evaluations = lazy(() => import('./pages/Evaluations'))
 const Search = lazy(() => import('./pages/Search'))
@@ -142,7 +144,26 @@ function App() {
                             <GroupForm />
                           </RequirePermission>
                         } />
-                        <Route path="/events" element={<Events />} />
+                        <Route path="/events" element={
+                          <RequirePermission resource="events" action="view">
+                            <Events />
+                          </RequirePermission>
+                        } />
+                        <Route path="/events/new" element={
+                          <RequirePermission resource="events" action="create">
+                            <EventForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/events/:id" element={
+                          <RequirePermission resource="events" action="view">
+                            <EventDetail />
+                          </RequirePermission>
+                        } />
+                        <Route path="/events/:id/edit" element={
+                          <RequirePermission resource="events" action="update">
+                            <EventForm />
+                          </RequirePermission>
+                        } />
                         <Route path="/reports" element={<Reports />} />
                         <Route path="/evaluations" element={<Evaluations />} />
                         <Route path="/search" element={<Search />} />
