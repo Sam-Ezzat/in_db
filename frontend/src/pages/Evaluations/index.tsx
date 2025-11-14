@@ -13,6 +13,7 @@ import {
   CalendarDaysIcon,
   StarIcon,
 } from '@heroicons/react/24/outline';
+import KPIEvaluations from '../KPIs/KPIEvaluations';
 
 // Enhanced color functions with theme integration
 const getTypeColor = (type: string) => {
@@ -53,6 +54,7 @@ interface Evaluation {
 
 const Evaluations: React.FC = () => {
   const { themeConfig, theme } = useTheme();
+  const [activeTab, setActiveTab] = useState<'surveys' | 'kpis'>('surveys');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
@@ -180,6 +182,50 @@ const Evaluations: React.FC = () => {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div 
+        className="border-b"
+        style={{ borderColor: themeConfig.colors.divider }}
+      >
+        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+          <button
+            onClick={() => setActiveTab('surveys')}
+            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'surveys'
+                ? 'border-indigo-500'
+                : 'border-transparent'
+            }`}
+            style={{
+              color: activeTab === 'surveys' ? themeConfig.colors.primary : themeConfig.colors.text,
+              opacity: activeTab === 'surveys' ? 1 : 0.6
+            }}
+          >
+            <DocumentTextIcon className="w-5 h-5 inline-block mr-2 -mt-1" />
+            Survey Evaluations
+          </button>
+          <button
+            onClick={() => setActiveTab('kpis')}
+            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'kpis'
+                ? 'border-indigo-500'
+                : 'border-transparent'
+            }`}
+            style={{
+              color: activeTab === 'kpis' ? themeConfig.colors.primary : themeConfig.colors.text,
+              opacity: activeTab === 'kpis' ? 1 : 0.6
+            }}
+          >
+            <ChartBarIcon className="w-5 h-5 inline-block mr-2 -mt-1" />
+            KPI Evaluations
+          </button>
+        </nav>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'kpis' ? (
+        <KPIEvaluations />
+      ) : (
+        <>
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <div 
@@ -542,6 +588,8 @@ const Evaluations: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

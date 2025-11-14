@@ -50,6 +50,12 @@ const Reports = lazy(() => import('./pages/Reports'))
 const ReportDetail = lazy(() => import('./pages/Reports/ReportDetail'))
 const ReportForm = lazy(() => import('./pages/Reports/ReportForm'))
 const ReportsDashboard = lazy(() => import('./pages/Reports/ReportsDashboard'))
+const KPIs = lazy(() => import('./pages/KPIs'))
+const KPIDetail = lazy(() => import('./pages/KPIs/KPIDetail'))
+const KPIForm = lazy(() => import('./pages/KPIs/KPIForm'))
+const KPIEvaluations = lazy(() => import('./pages/KPIs/KPIEvaluations'))
+const EvaluationDetail = lazy(() => import('./pages/KPIs/EvaluationDetail'))
+const EvaluationForm = lazy(() => import('./pages/KPIs/EvaluationForm'))
 const Evaluations = lazy(() => import('./pages/Evaluations'))
 const Search = lazy(() => import('./pages/Search'))
 const ExportImport = lazy(() => import('./pages/ExportImport'))
@@ -262,6 +268,50 @@ function App() {
                         <Route path="/reports/:id/edit" element={
                           <RequirePermission resource="reports" action="update">
                             <ReportForm />
+                          </RequirePermission>
+                        } />
+                        
+                        {/* KPI Routes */}
+                        <Route path="/kpis" element={
+                          <RequirePermission resource="kpis" action="view">
+                            <KPIs />
+                          </RequirePermission>
+                        } />
+                        <Route path="/kpis/new" element={
+                          <RequirePermission resource="kpis" action="create">
+                            <KPIForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/kpis/:id" element={
+                          <RequirePermission resource="kpis" action="view">
+                            <KPIDetail />
+                          </RequirePermission>
+                        } />
+                        <Route path="/kpis/:id/edit" element={
+                          <RequirePermission resource="kpis" action="update">
+                            <KPIForm />
+                          </RequirePermission>
+                        } />
+
+                        {/* KPI Evaluations Routes */}
+                        <Route path="/kpi-evaluations" element={
+                          <RequirePermission resource="evaluations" action="view">
+                            <KPIEvaluations />
+                          </RequirePermission>
+                        } />
+                        <Route path="/kpi-evaluations/new" element={
+                          <RequirePermission resource="evaluations" action="create">
+                            <EvaluationForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/kpi-evaluations/:id" element={
+                          <RequirePermission resource="evaluations" action="view">
+                            <EvaluationDetail />
+                          </RequirePermission>
+                        } />
+                        <Route path="/kpi-evaluations/:id/edit" element={
+                          <RequirePermission resource="evaluations" action="update">
+                            <EvaluationForm />
                           </RequirePermission>
                         } />
                         

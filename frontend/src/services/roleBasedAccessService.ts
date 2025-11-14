@@ -576,6 +576,18 @@ const systemPermissions: Omit<Permission, 'id' | 'createdAt' | 'updatedAt'>[] = 
   { name: 'Delete Reports', description: 'Delete reports', resource: 'reports', action: 'delete', scope: 'church', category: 'admin', isActive: true },
   { name: 'Export Reports', description: 'Export reports to various formats', resource: 'reports', action: 'export', scope: 'church', category: 'core', isActive: true },
   
+  // KPIs
+  { name: 'View KPIs', description: 'View KPI definitions', resource: 'kpis', action: 'view', scope: 'church', category: 'core', isActive: true },
+  { name: 'Create KPIs', description: 'Create new KPI definitions', resource: 'kpis', action: 'create', scope: 'church', category: 'admin', isActive: true },
+  { name: 'Update KPIs', description: 'Update KPI definitions', resource: 'kpis', action: 'update', scope: 'church', category: 'admin', isActive: true },
+  { name: 'Delete KPIs', description: 'Delete KPI definitions', resource: 'kpis', action: 'delete', scope: 'church', category: 'admin', isActive: true },
+  
+  // Evaluations
+  { name: 'View Evaluations', description: 'View KPI evaluations', resource: 'evaluations', action: 'view', scope: 'church', category: 'core', isActive: true },
+  { name: 'Create Evaluations', description: 'Create new evaluations', resource: 'evaluations', action: 'create', scope: 'church', category: 'core', isActive: true },
+  { name: 'Update Evaluations', description: 'Update existing evaluations', resource: 'evaluations', action: 'update', scope: 'church', category: 'core', isActive: true },
+  { name: 'Delete Evaluations', description: 'Delete evaluations', resource: 'evaluations', action: 'delete', scope: 'church', category: 'admin', isActive: true },
+  
   // Financial
   { name: 'View Financial', description: 'View financial information', resource: 'financial', action: 'read', scope: 'church', category: 'financial', isActive: true },
   { name: 'Manage Financial', description: 'Full financial management', resource: 'financial', action: 'manage', scope: 'global', category: 'financial', isActive: true },

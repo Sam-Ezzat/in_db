@@ -176,6 +176,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'attendance': ['view', 'create', 'update', 'delete', 'export', 'import'],
       'financial': ['view', 'create', 'update', 'delete', 'export', 'import'],
       'reports': ['view', 'create', 'update', 'delete', 'export'],
+      'kpis': ['view', 'create', 'update', 'delete'],
       'evaluations': ['view', 'create', 'update', 'delete'],
       'notifications': ['view', 'send', 'manage_templates'],
       'settings': ['view', 'manage'],
@@ -199,7 +200,8 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'attendance': ['view', 'create', 'update', 'delete', 'export'],
       'financial': ['view', 'create', 'update', 'export'],
       'reports': ['view', 'create', 'update', 'delete', 'export'],
-      'evaluations': ['view', 'create', 'update'],
+      'kpis': ['view', 'create', 'update', 'delete'],
+      'evaluations': ['view', 'create', 'update', 'delete'],
       'notifications': ['view', 'send'],
       'settings': ['view']
       ,
@@ -222,7 +224,8 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'attendance': ['view', 'create', 'update'],
       'financial': ['view'],
       'reports': ['view', 'create', 'update'],
-      'evaluations': ['view', 'create'],
+      'kpis': ['view'],
+      'evaluations': ['view', 'create', 'update'],
       'notifications': ['view']
       ,
       // Resources for Ministry Leader
@@ -244,6 +247,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'attendance': ['view'],
       'financial': ['view'],
       'reports': ['view'],
+      'kpis': ['view'],
       'evaluations': ['view'],
       'notifications': ['view']
       ,

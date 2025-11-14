@@ -28,6 +28,7 @@ const navigation = [
   { name: 'Financial', href: '/financial', icon: DollarSign },
   { name: 'Resources', href: '/resources', icon: Building2 },
   { name: 'Reports', href: '/reports', icon: FileText },
+  { name: 'KPIs', href: '/kpis', icon: TrendingUp },
   { name: 'Evaluations', href: '/evaluations', icon: TrendingUp },
   { name: 'Search', href: '/search', icon: Search },
   { name: 'Export/Import', href: '/export-import', icon: Download },
