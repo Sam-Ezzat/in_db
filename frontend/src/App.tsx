@@ -21,6 +21,9 @@ const PersonForm = lazy(() => import('./pages/People/PersonForm'))
 const Churches = lazy(() => import('./pages/Churches'))
 const ChurchDetail = lazy(() => import('./pages/Churches/ChurchDetail'))
 const ChurchForm = lazy(() => import('./pages/Churches/ChurchForm'))
+const Locations = lazy(() => import('./pages/Locations'))
+const LocationDetail = lazy(() => import('./pages/Locations/LocationDetail'))
+const LocationForm = lazy(() => import('./pages/Locations/LocationForm'))
 const Committees = lazy(() => import('./pages/Committees'))
 const CommitteeDetail = lazy(() => import('./pages/Committees/CommitteeDetail'))
 const CommitteeForm = lazy(() => import('./pages/Committees/CommitteeForm'))
@@ -121,6 +124,26 @@ function App() {
                         <Route path="/churches/new" element={<ChurchForm />} />
                         <Route path="/churches/:id" element={<ChurchDetail />} />
                         <Route path="/churches/:id/edit" element={<ChurchForm />} />
+                        <Route path="/locations" element={
+                          <RequirePermission resource="locations" action="view">
+                            <Locations />
+                          </RequirePermission>
+                        } />
+                        <Route path="/locations/new" element={
+                          <RequirePermission resource="locations" action="create">
+                            <LocationForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/locations/:id" element={
+                          <RequirePermission resource="locations" action="view">
+                            <LocationDetail />
+                          </RequirePermission>
+                        } />
+                        <Route path="/locations/:id/edit" element={
+                          <RequirePermission resource="locations" action="update">
+                            <LocationForm />
+                          </RequirePermission>
+                        } />
                         <Route path="/committees" element={<Committees />} />
                         <Route path="/committees/new" element={<CommitteeForm />} />
                         <Route path="/committees/:id" element={<CommitteeDetail />} />

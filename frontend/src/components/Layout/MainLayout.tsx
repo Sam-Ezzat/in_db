@@ -7,7 +7,7 @@ import QuickSearch from '../Search/QuickSearch'
 import { 
   LayoutDashboard, Users, Building, Users2, UserCheck, 
   Calendar, FileText, TrendingUp, Settings, User, 
-  LogOut, Palette, Menu, X, ChevronDown, Search, Download, Shield, DollarSign, Building2, MessageSquare, Bell
+  LogOut, Palette, Menu, X, ChevronDown, Search, Download, Shield, DollarSign, Building2, MessageSquare, Bell, MapPin
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
@@ -19,6 +19,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'People', href: '/people', icon: Users },
   { name: 'Churches', href: '/churches', icon: Building },
+  { name: 'Locations', href: '/locations', icon: MapPin },
   { name: 'Committees', href: '/committees', icon: Users2 },
   { name: 'Teams', href: '/teams', icon: UserCheck },
   { name: 'Groups', href: '/groups', icon: Users },

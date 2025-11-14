@@ -168,6 +168,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
     permissions: {
       'people': ['view', 'create', 'update', 'delete', 'export', 'import'],
       'churches': ['view', 'create', 'update', 'delete', 'export', 'import'],
+      'locations': ['view', 'create', 'read', 'update', 'delete', 'export', 'import'],
       'committees': ['view', 'create', 'update', 'delete', 'export', 'import'],
       'teams': ['view', 'create', 'update', 'delete', 'export', 'import'],
       'groups': ['view', 'create', 'update', 'delete', 'export', 'import'],
@@ -189,6 +190,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
     permissions: {
       'people': ['view', 'create', 'update', 'delete', 'export'],
       'churches': ['view', 'update'],
+      'locations': ['view', 'read', 'update'],
       'committees': ['view', 'create', 'update', 'delete'],
       'teams': ['view', 'create', 'update', 'delete'],
       'groups': ['view', 'create', 'update', 'delete'],
@@ -210,6 +212,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
     permissions: {
       'people': ['view', 'export'],
       'churches': ['view'],
+      'locations': ['view', 'read'],
       'committees': ['view'],
       'teams': ['view', 'update'],
       'groups': ['view', 'create', 'update', 'delete'],
@@ -230,6 +233,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
     permissions: {
       'people': ['view'],
       'churches': ['view'],
+      'locations': ['view', 'read'],
       'committees': ['view'],
       'teams': ['view'],
       'groups': ['view'],
@@ -250,6 +254,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
     permissions: {
       'people': ['view'],
       'churches': ['view'],
+      'locations': ['view', 'read'],
       'events': ['view'],
       'groups': ['view'],
       'notifications': ['view']
