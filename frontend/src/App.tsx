@@ -39,6 +39,7 @@ const EventForm = lazy(() => import('./pages/Events/EventForm'))
 const Attendance = lazy(() => import('./pages/Attendance'))
 const AttendanceDetail = lazy(() => import('./pages/Attendance/AttendanceDetail'))
 const AttendanceForm = lazy(() => import('./pages/Attendance/AttendanceForm'))
+const BulkAttendanceForm = lazy(() => import('./pages/Attendance/BulkAttendanceForm'))
 const Messaging = lazy(() => import('./pages/Communications/Messaging'))
 const NotificationSystem = lazy(() => import('./pages/Communications/NotificationSystem'))
 const CampaignManagement = lazy(() => import('./pages/Communications/CampaignManagement'))
@@ -205,6 +206,11 @@ function App() {
                         <Route path="/attendance/new" element={
                           <RequirePermission resource="attendance" action="create">
                             <AttendanceForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/attendance/bulk" element={
+                          <RequirePermission resource="attendance" action="create">
+                            <BulkAttendanceForm />
                           </RequirePermission>
                         } />
                         <Route path="/attendance/:id" element={

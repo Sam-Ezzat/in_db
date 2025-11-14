@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Calendar, UserCheck, Search, Filter, X, Plus, Download } from 'lucide-react'
+import { Calendar, UserCheck, Search, Filter, X, Plus, Download, Users } from 'lucide-react'
 import { attendanceService, Attendance, AttendanceStatistics } from '../../services/attendanceService'
 import { useTheme } from '../../contexts/ThemeContext'
 import { useAccess } from '../../contexts/AccessControlContext'
@@ -108,14 +108,28 @@ export default function AttendancePage() {
           </p>
         </div>
         {can('attendance', 'create') && (
-          <button
-            onClick={() => navigate('/attendance/new')}
-            className="flex items-center px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
-            style={{ backgroundColor: themeConfig.colors.primary }}
-          >
-            <Plus size={20} className="mr-2" />
-            Mark Attendance
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate('/attendance/bulk')}
+              className="flex items-center px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity"
+              style={{ 
+                backgroundColor: themeConfig.colors.secondary,
+                color: themeConfig.colors.primary,
+                border: `2px solid ${themeConfig.colors.primary}`
+              }}
+            >
+              <Users size={20} className="mr-2" />
+              Bulk Mark
+            </button>
+            <button
+              onClick={() => navigate('/attendance/new')}
+              className="flex items-center px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: themeConfig.colors.primary }}
+            >
+              <Plus size={20} className="mr-2" />
+              Mark Attendance
+            </button>
+          </div>
         )}
       </div>
 
