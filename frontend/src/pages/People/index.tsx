@@ -2,7 +2,6 @@ import { useTheme } from '../../contexts/ThemeContext'
 import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Filter, Download, User } from 'lucide-react'
 import { useAccess } from '../../contexts/AccessControlContext'
-import RequirePermission from '../../components/Auth/RequirePermission'
 
 const People = () => {
   const { themeConfig } = useTheme()
@@ -11,10 +10,47 @@ const People = () => {
 
   // Mock data - replace with real API call
   const people = [
-    { id: 1, name: 'John Smith', email: 'john@example.com', role: 'Pastor', status: 'Active', church: 'Main Church' },
-    { id: 2, name: 'Sarah Johnson', email: 'sarah@example.com', role: 'Team Lead', status: 'Active', church: 'Main Church' },
-    { id: 3, name: 'Michael Brown', email: 'michael@example.com', role: 'Member', status: 'Active', church: 'Branch Church' },
-    { id: 4, name: 'Emily Davis', email: 'emily@example.com', role: 'Committee Lead', status: 'Inactive', church: 'Main Church' },
+    { 
+      id: 1, 
+      name: 'John Smith', 
+      email: 'john@example.com', 
+      phone: '+1 (555) 123-4567',
+      church: 'Main Church', 
+      membershipStatus: 'active', 
+      membershipRole: 'Pastor',
+      joinedDate: '2020-03-10'
+    },
+    { 
+      id: 2, 
+      name: 'Sarah Johnson', 
+      email: 'sarah@example.com', 
+      phone: '+1 (555) 234-5678',
+      church: 'Main Church', 
+      membershipStatus: 'active', 
+      membershipRole: 'Servant',
+      joinedDate: '2021-06-15'
+    },
+    { 
+      id: 3, 
+      name: 'Michael Brown', 
+      email: 'michael@example.com', 
+      phone: '+1 (555) 345-6789',
+      church: 'Branch Church', 
+      membershipStatus: 'active', 
+      membershipRole: 'Member',
+      joinedDate: '2019-01-20'
+    },
+    { 
+      id: 4, 
+      name: 'Emily Davis', 
+      email: 'emily@example.com', 
+      phone: '+1 (555) 456-7890',
+      church: 'Main Church', 
+      membershipStatus: 'inactive', 
+      membershipRole: 'Deacon',
+      joinedDate: '2018-11-05',
+      leftDate: '2023-12-31'
+    },
   ]
 
   return (
@@ -114,11 +150,7 @@ const People = () => {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" 
                     style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" 
-                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
-                  Role
+                  Contact
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" 
                     style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
@@ -126,7 +158,15 @@ const People = () => {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" 
                     style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
+                  Role
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" 
+                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
                   Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" 
+                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
+                  Member Since
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider" 
                     style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
@@ -152,26 +192,29 @@ const People = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
-                    {person.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: themeConfig.colors.text }}>
-                    {person.role}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm" style={{ color: themeConfig.colors.text }}>{person.email}</div>
+                    <div className="text-sm" style={{ color: themeConfig.colors.text, opacity: 0.7 }}>{person.phone}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
                     {person.church}
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: themeConfig.colors.text }}>
+                    {person.membershipRole}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span 
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        person.status === 'Active' ? 'text-green-800' : 'text-red-800'
-                      }`}
+                      className="px-2 py-1 text-xs font-medium rounded-full"
                       style={{ 
-                        backgroundColor: person.status === 'Active' ? '#10B98120' : '#EF444420'
+                        backgroundColor: person.membershipStatus === 'active' ? '#10B98120' : person.membershipStatus === 'visitor' ? '#F59E0B20' : '#6B728020',
+                        color: person.membershipStatus === 'active' ? '#10B981' : person.membershipStatus === 'visitor' ? '#F59E0B' : '#6B7280'
                       }}
                     >
-                      {person.status}
+                      {person.membershipStatus.charAt(0).toUpperCase() + person.membershipStatus.slice(1)}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: themeConfig.colors.text, opacity: 0.7 }}>
+                    {new Date(person.joinedDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <button 

@@ -252,6 +252,14 @@ export interface Person extends TenantEntity {
   email?: string;
   address?: string;
   notes?: string;
+  // Church membership fields
+  churchId?: string;
+  church?: Church;
+  membershipStatus?: 'active' | 'inactive' | 'visitor';
+  membershipType?: string; // e.g., 'Regular Member', 'Servant', 'Deacon', etc.
+  joinedDate?: string;
+  leftDate?: string;
+  membershipRole?: string; // Role within the church
 }
 
 // Location & Church Types
