@@ -36,6 +36,9 @@ const GroupForm = lazy(() => import('./pages/Groups/GroupForm'))
 const Events = lazy(() => import('./pages/Events'))
 const EventDetail = lazy(() => import('./pages/Events/EventDetail'))
 const EventForm = lazy(() => import('./pages/Events/EventForm'))
+const Attendance = lazy(() => import('./pages/Attendance'))
+const AttendanceDetail = lazy(() => import('./pages/Attendance/AttendanceDetail'))
+const AttendanceForm = lazy(() => import('./pages/Attendance/AttendanceForm'))
 const Messaging = lazy(() => import('./pages/Communications/Messaging'))
 const NotificationSystem = lazy(() => import('./pages/Communications/NotificationSystem'))
 const CampaignManagement = lazy(() => import('./pages/Communications/CampaignManagement'))
@@ -190,6 +193,28 @@ function App() {
                         <Route path="/events/:id/edit" element={
                           <RequirePermission resource="events" action="update">
                             <EventForm />
+                          </RequirePermission>
+                        } />
+                        
+                        {/* Attendance Routes */}
+                        <Route path="/attendance" element={
+                          <RequirePermission resource="attendance" action="view">
+                            <Attendance />
+                          </RequirePermission>
+                        } />
+                        <Route path="/attendance/new" element={
+                          <RequirePermission resource="attendance" action="create">
+                            <AttendanceForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/attendance/:id" element={
+                          <RequirePermission resource="attendance" action="view">
+                            <AttendanceDetail />
+                          </RequirePermission>
+                        } />
+                        <Route path="/attendance/:id/edit" element={
+                          <RequirePermission resource="attendance" action="update">
+                            <AttendanceForm />
                           </RequirePermission>
                         } />
                         

@@ -556,6 +556,13 @@ const systemPermissions: Omit<Permission, 'id' | 'createdAt' | 'updatedAt'>[] = 
   { name: 'Record Event Attendance', description: 'Record and manage event attendance', resource: 'events', action: 'record_attendance', scope: 'church', category: 'ministry', isActive: true },
   { name: 'View Event Analytics', description: 'View event analytics and reports', resource: 'events', action: 'view_analytics', scope: 'church', category: 'ministry', isActive: true },
   
+  // Attendance Tracking
+  { name: 'View Attendance', description: 'View attendance records', resource: 'attendance', action: 'view', scope: 'church', category: 'core', isActive: true },
+  { name: 'Mark Attendance', description: 'Mark individual or bulk attendance', resource: 'attendance', action: 'create', scope: 'church', category: 'core', isActive: true },
+  { name: 'Update Attendance', description: 'Update attendance records', resource: 'attendance', action: 'update', scope: 'church', category: 'core', isActive: true },
+  { name: 'Delete Attendance', description: 'Delete attendance records', resource: 'attendance', action: 'delete', scope: 'church', category: 'admin', isActive: true },
+  { name: 'Export Attendance', description: 'Export attendance reports', resource: 'attendance', action: 'export', scope: 'church', category: 'core', isActive: true },
+  
   // Locations (Geographic Management)
   { name: 'View Locations', description: 'View location hierarchy (Country/Governorate/Sector)', resource: 'locations', action: 'read', scope: 'global', category: 'core', isActive: true },
   { name: 'Create Locations', description: 'Create new locations in hierarchy', resource: 'locations', action: 'create', scope: 'global', category: 'admin', isActive: true },
