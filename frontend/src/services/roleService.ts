@@ -175,7 +175,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'events': ['view', 'create', 'update', 'delete', 'export', 'import'],
       'attendance': ['view', 'create', 'update', 'delete', 'export', 'import'],
       'financial': ['view', 'create', 'update', 'delete', 'export', 'import'],
-      'reports': ['view', 'create', 'export'],
+      'reports': ['view', 'create', 'update', 'delete', 'export'],
       'evaluations': ['view', 'create', 'update', 'delete'],
       'notifications': ['view', 'send', 'manage_templates'],
       'settings': ['view', 'manage'],
@@ -198,7 +198,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'events': ['view', 'create', 'update', 'delete'],
       'attendance': ['view', 'create', 'update', 'delete', 'export'],
       'financial': ['view', 'create', 'update', 'export'],
-      'reports': ['view', 'create'],
+      'reports': ['view', 'create', 'update', 'delete', 'export'],
       'evaluations': ['view', 'create', 'update'],
       'notifications': ['view', 'send'],
       'settings': ['view']
@@ -221,7 +221,7 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
       'events': ['view', 'create', 'update'],
       'attendance': ['view', 'create', 'update'],
       'financial': ['view'],
-      'reports': ['view'],
+      'reports': ['view', 'create', 'update'],
       'evaluations': ['view', 'create'],
       'notifications': ['view']
       ,
@@ -271,14 +271,26 @@ const systemRoles: Omit<RoleDef, 'id' | 'createdAt' | 'updatedAt'>[] = [
 service.seedRoles(systemRoles)
 
 // Mock user role assignments
-const mockUserRoles = {
-  'admin_001': ['1'], // Super Administrator for Church Administrator
-  'pastor_001': ['2'], // Church Administrator for Pastor
+const mockUserRoles: Record<string, string[]> = {
+  'admin_001': ['1'], // Super Administrator
+  'pastor_001': ['2'], // Church Administrator
   'current-user': ['1'], // Super Administrator (fallback)
   'user-2': ['2'], // Church Administrator
   'user-3': ['3'], // Ministry Leader
   'user-4': ['4'], // Member
   'user-5': ['5']  // Volunteer
+}
+
+// Override getUserRoles to assign default role if user not found
+const originalGetUserRoles = service.getUserRoles.bind(service)
+service.getUserRoles = async function(userId: string): Promise<string[]> {
+  const roles = await originalGetUserRoles(userId)
+  // If user has no roles assigned, give them Member role (id: '4')
+  if (!roles || roles.length === 0) {
+    console.warn(`User ${userId} has no roles, assigning Member role`)
+    return ['4'] // Member role
+  }
+  return roles
 }
 
 // Assign mock roles to users

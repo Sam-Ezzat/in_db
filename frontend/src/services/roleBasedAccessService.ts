@@ -570,8 +570,11 @@ const systemPermissions: Omit<Permission, 'id' | 'createdAt' | 'updatedAt'>[] = 
   { name: 'Delete Locations', description: 'Delete locations from hierarchy', resource: 'locations', action: 'delete', scope: 'global', category: 'admin', isActive: true },
   
   // Reports
-  { name: 'View Reports', description: 'Access basic reports', resource: 'reports', action: 'read', scope: 'church', category: 'core', isActive: true },
-  { name: 'Advanced Reports', description: 'Access advanced analytics and reports', resource: 'reports', action: 'manage', scope: 'global', category: 'admin', isActive: true },
+  { name: 'View Reports', description: 'View reports and analytics', resource: 'reports', action: 'view', scope: 'church', category: 'core', isActive: true },
+  { name: 'Create Reports', description: 'Create new reports', resource: 'reports', action: 'create', scope: 'church', category: 'core', isActive: true },
+  { name: 'Update Reports', description: 'Update existing reports', resource: 'reports', action: 'update', scope: 'church', category: 'core', isActive: true },
+  { name: 'Delete Reports', description: 'Delete reports', resource: 'reports', action: 'delete', scope: 'church', category: 'admin', isActive: true },
+  { name: 'Export Reports', description: 'Export reports to various formats', resource: 'reports', action: 'export', scope: 'church', category: 'core', isActive: true },
   
   // Financial
   { name: 'View Financial', description: 'View financial information', resource: 'financial', action: 'read', scope: 'church', category: 'financial', isActive: true },

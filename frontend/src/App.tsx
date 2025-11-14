@@ -47,6 +47,9 @@ const WhatsAppMessenger = lazy(() => import('./pages/Communications/WhatsAppMess
 const EmailComposer = lazy(() => import('./pages/Communications/EmailComposer'))
 const Communications = lazy(() => import('./pages/Communications'))
 const Reports = lazy(() => import('./pages/Reports'))
+const ReportDetail = lazy(() => import('./pages/Reports/ReportDetail'))
+const ReportForm = lazy(() => import('./pages/Reports/ReportForm'))
+const ReportsDashboard = lazy(() => import('./pages/Reports/ReportsDashboard'))
 const Evaluations = lazy(() => import('./pages/Evaluations'))
 const Search = lazy(() => import('./pages/Search'))
 const ExportImport = lazy(() => import('./pages/ExportImport'))
@@ -235,7 +238,33 @@ function App() {
                         <Route path="/communications/whatsapp" element={<WhatsAppMessenger />} />
                         <Route path="/communications/email" element={<EmailComposer />} />
                         
-                        <Route path="/reports" element={<Reports />} />
+                        {/* Reports Routes */}
+                        <Route path="/reports" element={
+                          <RequirePermission resource="reports" action="view">
+                            <Reports />
+                          </RequirePermission>
+                        } />
+                        <Route path="/reports/dashboard" element={
+                          <RequirePermission resource="reports" action="view">
+                            <ReportsDashboard />
+                          </RequirePermission>
+                        } />
+                        <Route path="/reports/new" element={
+                          <RequirePermission resource="reports" action="create">
+                            <ReportForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/reports/:id" element={
+                          <RequirePermission resource="reports" action="view">
+                            <ReportDetail />
+                          </RequirePermission>
+                        } />
+                        <Route path="/reports/:id/edit" element={
+                          <RequirePermission resource="reports" action="update">
+                            <ReportForm />
+                          </RequirePermission>
+                        } />
+                        
                         <Route path="/evaluations" element={<Evaluations />} />
                         <Route path="/search" element={<Search />} />
                         <Route path="/export-import" element={<ExportImport />} />
