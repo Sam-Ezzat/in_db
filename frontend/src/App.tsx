@@ -33,11 +33,16 @@ const GroupForm = lazy(() => import('./pages/Groups/GroupForm'))
 const Events = lazy(() => import('./pages/Events'))
 const EventDetail = lazy(() => import('./pages/Events/EventDetail'))
 const EventForm = lazy(() => import('./pages/Events/EventForm'))
+const Messaging = lazy(() => import('./pages/Communications/Messaging'))
+const NotificationSystem = lazy(() => import('./pages/Communications/NotificationSystem'))
+const CampaignManagement = lazy(() => import('./pages/Communications/CampaignManagement'))
+const WhatsAppMessenger = lazy(() => import('./pages/Communications/WhatsAppMessenger'))
+const EmailComposer = lazy(() => import('./pages/Communications/EmailComposer'))
+const Communications = lazy(() => import('./pages/Communications'))
 const Reports = lazy(() => import('./pages/Reports'))
 const Evaluations = lazy(() => import('./pages/Evaluations'))
 const Search = lazy(() => import('./pages/Search'))
 const ExportImport = lazy(() => import('./pages/ExportImport'))
-const Notifications = lazy(() => import('./pages/Notifications'))
 const Financial = lazy(() => import('./pages/Financial'))
 const Resources = lazy(() => import('./pages/Resources'))
 const RoleManagement = lazy(() => import('./pages/RoleManagement'))
@@ -164,11 +169,23 @@ function App() {
                             <EventForm />
                           </RequirePermission>
                         } />
+                        
+                        {/* Communication Routes */}
+                        <Route path="/communications" element={<Communications />} />
+                        <Route path="/communications/messages" element={<Messaging />} />
+                        <Route path="/communications/messages/:id" element={<Messaging />} />
+                        <Route path="/communications/notifications" element={<NotificationSystem />} />
+                        <Route path="/communications/campaigns" element={<CampaignManagement />} />
+                        <Route path="/communications/campaigns/:id" element={<CampaignManagement />} />
+                        <Route path="/communications/campaigns/:id/edit" element={<CampaignManagement />} />
+                        <Route path="/communications/whatsapp" element={<WhatsAppMessenger />} />
+                        <Route path="/communications/email" element={<EmailComposer />} />
+                        
                         <Route path="/reports" element={<Reports />} />
                         <Route path="/evaluations" element={<Evaluations />} />
                         <Route path="/search" element={<Search />} />
                         <Route path="/export-import" element={<ExportImport />} />
-                        <Route path="/notifications" element={<Notifications />} />
+                        <Route path="/notifications" element={<Navigate to="/communications" replace />} />
                         <Route path="/financial" element={
                           <RequirePermission resource="financial" action="view">
                             <Financial />

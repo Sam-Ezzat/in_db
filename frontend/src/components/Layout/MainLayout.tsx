@@ -7,7 +7,7 @@ import QuickSearch from '../Search/QuickSearch'
 import { 
   LayoutDashboard, Users, Building, Users2, UserCheck, 
   Calendar, FileText, TrendingUp, Settings, User, 
-  LogOut, Palette, Menu, X, ChevronDown, Bell, Search, Download, Shield, DollarSign, Building2
+  LogOut, Palette, Menu, X, ChevronDown, Search, Download, Shield, DollarSign, Building2, MessageSquare, Bell
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
@@ -29,7 +29,7 @@ const navigation = [
   { name: 'Evaluations', href: '/evaluations', icon: TrendingUp },
   { name: 'Search', href: '/search', icon: Search },
   { name: 'Export/Import', href: '/export-import', icon: Download },
-  { name: 'Notifications', href: '/notifications', icon: Bell },
+  { name: 'Communications', href: '/communications', icon: MessageSquare },
   { name: 'Role Management', href: '/role-management', icon: Shield },
 ]
 
@@ -200,7 +200,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           {/* Right side - Notifications and Profile */}
           <div className="flex items-center space-x-4">
             {/* Notifications */}
-            <button
+            <Link
+              to="/communications"
               className="p-2 rounded-lg hover:opacity-80 transition-opacity relative"
               style={{ color: themeConfig.colors.text }}
             >
@@ -211,7 +212,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               >
                 3
               </span>
-            </button>
+            </Link>
 
             {/* Theme Selector */}
             <div className="relative" ref={themeRef}>

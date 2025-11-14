@@ -579,13 +579,32 @@ const systemPermissions: Omit<Permission, 'id' | 'createdAt' | 'updatedAt'>[] = 
   { name: 'Delete Groups', description: 'Delete groups', resource: 'groups', action: 'delete', scope: 'church', category: 'admin', isActive: true },
   { name: 'Manage Group Members', description: 'Add and remove group members', resource: 'groups', action: 'manage_members', scope: 'church', category: 'ministry', isActive: true },
   
+  // Communication Management
+  { name: 'View Messages', description: 'View messages and conversations', resource: 'messages', action: 'view', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Create Messages', description: 'Send messages and start conversations', resource: 'messages', action: 'create', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Update Messages', description: 'Edit and manage messages', resource: 'messages', action: 'update', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Delete Messages', description: 'Delete messages and conversations', resource: 'messages', action: 'delete', scope: 'church', category: 'admin', isActive: true },
+  
+  { name: 'View Notifications', description: 'View notifications', resource: 'notifications', action: 'view', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Create Notifications', description: 'Send notifications to users', resource: 'notifications', action: 'create', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Update Notifications', description: 'Update notification preferences', resource: 'notifications', action: 'update', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Manage Notifications', description: 'Full notification system management', resource: 'notifications', action: 'manage', scope: 'global', category: 'admin', isActive: true },
+  
+  { name: 'View Campaigns', description: 'View email and SMS campaigns', resource: 'campaigns', action: 'view', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Create Campaigns', description: 'Create email and SMS campaigns', resource: 'campaigns', action: 'create', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Send Campaigns', description: 'Send and schedule campaigns', resource: 'campaigns', action: 'send', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Update Campaigns', description: 'Update campaign information', resource: 'campaigns', action: 'update', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Delete Campaigns', description: 'Delete campaigns', resource: 'campaigns', action: 'delete', scope: 'church', category: 'admin', isActive: true },
+  { name: 'View Campaign Analytics', description: 'View campaign performance analytics', resource: 'campaigns', action: 'view_analytics', scope: 'church', category: 'ministry', isActive: true },
+  
+  { name: 'View Templates', description: 'View communication templates', resource: 'templates', action: 'view', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Create Templates', description: 'Create communication templates', resource: 'templates', action: 'create', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Update Templates', description: 'Update communication templates', resource: 'templates', action: 'update', scope: 'church', category: 'ministry', isActive: true },
+  { name: 'Delete Templates', description: 'Delete communication templates', resource: 'templates', action: 'delete', scope: 'church', category: 'admin', isActive: true },
+  
   // System Administration
   { name: 'User Management', description: 'Manage user accounts and roles', resource: 'users', action: 'manage', scope: 'global', category: 'admin', isActive: true },
-  { name: 'System Settings', description: 'Modify system configuration', resource: 'system', action: 'manage', scope: 'global', category: 'admin', isActive: true },
-  
-  // Notifications
-  { name: 'Send Notifications', description: 'Send notifications to users', resource: 'notifications', action: 'create', scope: 'church', category: 'ministry', isActive: true },
-  { name: 'Manage Notifications', description: 'Full notification system management', resource: 'notifications', action: 'manage', scope: 'global', category: 'admin', isActive: true }
+  { name: 'System Settings', description: 'Modify system configuration', resource: 'system', action: 'manage', scope: 'global', category: 'admin', isActive: true }
 ]
 
 // Add system permissions
