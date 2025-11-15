@@ -5,11 +5,11 @@ import RequirePermission from '../../components/Auth/RequirePermission'
 import { 
   CalendarIcon, ClockIcon, MapPinIcon, UserIcon, UsersIcon,
   PencilIcon, TrashIcon, ArrowLeftIcon, ShareIcon,
-  CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon,
+  CheckCircleIcon, ExclamationTriangleIcon,
   DocumentDuplicateIcon, BellIcon, CurrencyDollarIcon,
-  ChartBarIcon, QrCodeIcon, PrinterIcon, EnvelopeIcon,
+  ChartBarIcon, PrinterIcon, EnvelopeIcon,
   PhoneIcon, UserPlusIcon, ClipboardDocumentListIcon,
-  TagIcon, EyeIcon, CogIcon, UserGroupIcon
+  TagIcon, EyeIcon, UserGroupIcon
 } from '@heroicons/react/24/outline'
 import { 
   eventService, 
@@ -80,6 +80,19 @@ const EventDetail: React.FC = () => {
       console.error('Error duplicating event:', error)
       alert('Failed to duplicate event. Please try again.')
     }
+  }
+
+  const handleShareRegistrationLink = () => {
+    if (!event) return
+
+    const registrationUrl = `${window.location.origin}/register-event/${event.id}`
+    
+    navigator.clipboard.writeText(registrationUrl).then(() => {
+      alert(`Registration link copied to clipboard!\n\n${registrationUrl}\n\nShare this link with people to register for the event.`)
+    }).catch(() => {
+      // Fallback if clipboard API not available
+      prompt('Copy the registration link:', registrationUrl)
+    })
   }
 
   const getCategoryColor = (category: string) => {
@@ -231,8 +244,7 @@ const EventDetail: React.FC = () => {
             <RequirePermission resource="events" action="update">
               <button
                 onClick={() => navigate(`/events/${event.id}/edit`)}
-                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
-                style={{ focusRingColor: themeConfig.colors.primary }}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 <PencilIcon className="h-4 w-4 mr-2" />
                 Edit
@@ -241,20 +253,28 @@ const EventDetail: React.FC = () => {
 
             <button
               onClick={handleDuplicateEvent}
-              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
-              style={{ focusRingColor: themeConfig.colors.primary }}
+              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <DocumentDuplicateIcon className="h-4 w-4 mr-2" />
               Duplicate
             </button>
 
+            {event.registrationRequired && (
+              <button
+                onClick={handleShareRegistrationLink}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <ShareIcon className="h-4 w-4 mr-2" />
+                Share Registration Link
+              </button>
+            )}
+
             <button
-              onClick={() => alert('Share functionality coming soon!')}
-              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
-              style={{ focusRingColor: themeConfig.colors.primary }}
+              onClick={() => window.print()}
+              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              <ShareIcon className="h-4 w-4 mr-2" />
-              Share
+              <PrinterIcon className="h-4 w-4 mr-2" />
+              Print
             </button>
 
             <RequirePermission resource="events" action="delete">

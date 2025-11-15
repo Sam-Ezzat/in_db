@@ -36,6 +36,7 @@ const GroupForm = lazy(() => import('./pages/Groups/GroupForm'))
 const Events = lazy(() => import('./pages/Events'))
 const EventDetail = lazy(() => import('./pages/Events/EventDetail'))
 const EventForm = lazy(() => import('./pages/Events/EventForm'))
+const PublicRegistrationForm = lazy(() => import('./pages/EventRegistration/PublicRegistrationForm'))
 const Attendance = lazy(() => import('./pages/Attendance'))
 const AttendanceDetail = lazy(() => import('./pages/Attendance/AttendanceDetail'))
 const AttendanceForm = lazy(() => import('./pages/Attendance/AttendanceForm'))
@@ -57,6 +58,8 @@ const KPIEvaluations = lazy(() => import('./pages/KPIs/KPIEvaluations'))
 const EvaluationDetail = lazy(() => import('./pages/KPIs/EvaluationDetail'))
 const EvaluationForm = lazy(() => import('./pages/KPIs/EvaluationForm'))
 const Evaluations = lazy(() => import('./pages/Evaluations'))
+const SurveyEvaluationDetail = lazy(() => import('./pages/Evaluations/EvaluationDetail'))
+const SurveyEvaluationForm = lazy(() => import('./pages/Evaluations/EvaluationForm'))
 const Search = lazy(() => import('./pages/Search'))
 const ExportImport = lazy(() => import('./pages/ExportImport'))
 const Financial = lazy(() => import('./pages/Financial'))
@@ -78,6 +81,9 @@ function App() {
         <div className="min-h-screen bg-gray-50 text-gray-900 transition-colors duration-300">
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
+              {/* Public event registration - no auth required */}
+              <Route path="/register-event/:eventId" element={<PublicRegistrationForm />} />
+              
               {/* Auth routes - restricted for authenticated users */}
               <Route path="/auth/login" element={
                 <PublicRoute restricted>
@@ -315,7 +321,24 @@ function App() {
                           </RequirePermission>
                         } />
                         
+                        {/* Survey Evaluation Routes */}
                         <Route path="/evaluations" element={<Evaluations />} />
+                        <Route path="/evaluations/new" element={
+                          <RequirePermission resource="evaluations" action="create">
+                            <SurveyEvaluationForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/evaluations/:id/edit" element={
+                          <RequirePermission resource="evaluations" action="update">
+                            <SurveyEvaluationForm />
+                          </RequirePermission>
+                        } />
+                        <Route path="/evaluations/:id" element={
+                          <RequirePermission resource="evaluations" action="view">
+                            <SurveyEvaluationDetail />
+                          </RequirePermission>
+                        } />
+                        
                         <Route path="/search" element={<Search />} />
                         <Route path="/export-import" element={<ExportImport />} />
                         <Route path="/notifications" element={<Navigate to="/communications" replace />} />

@@ -1,83 +1,61 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../../contexts/ThemeContext'
+import { eventService, Event } from '../../services/eventService'
 import { 
   CalendarIcon, ClockIcon, MapPinIcon, UserIcon, 
   PlusIcon, MagnifyingGlassIcon,
-  EllipsisVerticalIcon, PencilIcon,
+  EyeIcon, TrashIcon, ShareIcon,
   UsersIcon
 } from '@heroicons/react/24/outline'
-
-interface Event {
-  id: string
-  title: string
-  description: string
-  date: string
-  time: string
-  location: string
-  category: 'service' | 'meeting' | 'social' | 'outreach' | 'youth' | 'other'
-  attendees: number
-  maxAttendees?: number
-  organizer: string
-  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled'
-  isRecurring: boolean
-  rsvpRequired: boolean
-}
 
 const Events: React.FC = () => {
   const { themeConfig } = useTheme()
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [events, setEvents] = useState<Event[]>([])
+  const [loading, setLoading] = useState(true)
 
-  // Mock data for events
-  const events: Event[] = [
-    {
-      id: '1',
-      title: 'Sunday Morning Service',
-      description: 'Weekly worship service with communion',
-      date: '2024-01-14',
-      time: '10:00 AM',
-      location: 'Main Sanctuary',
-      category: 'service',
-      attendees: 245,
-      maxAttendees: 300,
-      organizer: 'Pastor John Smith',
-      status: 'upcoming',
-      isRecurring: true,
-      rsvpRequired: false
-    },
-    {
-      id: '2',
-      title: 'Youth Bible Study',
-      description: 'Weekly Bible study for young adults',
-      date: '2024-01-15',
-      time: '7:00 PM',
-      location: 'Youth Center',
-      category: 'youth',
-      attendees: 32,
-      maxAttendees: 50,
-      organizer: 'Sarah Johnson',
-      status: 'upcoming',
-      isRecurring: true,
-      rsvpRequired: true
-    },
-    {
-      id: '3',
-      title: 'Community Outreach',
-      description: 'Food distribution to local families',
-      date: '2024-01-16',
-      time: '2:00 PM',
-      location: 'Community Center',
-      category: 'outreach',
-      attendees: 18,
-      maxAttendees: 25,
-      organizer: 'Mary Wilson',
-      status: 'upcoming',
-      isRecurring: false,
-      rsvpRequired: true
+  useEffect(() => {
+    loadEvents()
+  }, [selectedCategory])
+
+  const loadEvents = async () => {
+    try {
+      setLoading(true)
+      const data = await eventService.getEvents({
+        category: selectedCategory !== 'all' ? selectedCategory as any : undefined
+      })
+      setEvents(data)
+    } catch (error) {
+      console.error('Failed to load events:', error)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
+
+  const handleDelete = async (eventId: string) => {
+    if (window.confirm('Are you sure you want to delete this event?')) {
+      try {
+        await eventService.deleteEvent(eventId)
+        await loadEvents()
+      } catch (error) {
+        console.error('Failed to delete event:', error)
+        alert('Failed to delete event')
+      }
+    }
+  }
+
+  const handleCopyRegistrationLink = (eventId: string, eventTitle: string) => {
+    const registrationUrl = `${window.location.origin}/register-event/${eventId}`
+    
+    navigator.clipboard.writeText(registrationUrl).then(() => {
+      alert(`Registration link for "${eventTitle}" copied to clipboard!\n\n${registrationUrl}`)
+    }).catch(() => {
+      prompt('Copy the registration link:', registrationUrl)
+    })
+  }
 
   const categories = [
     { value: 'all', label: 'All Events' },
@@ -121,11 +99,28 @@ const Events: React.FC = () => {
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (event.description?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
                          event.organizer.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory
     return matchesSearch && matchesCategory
   })
+
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    })
+  }
+
+  const formatTime = (date: Date) => {
+    return new Date(date).toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit', 
+      hour12: true 
+    })
+  }
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -190,7 +185,7 @@ const Events: React.FC = () => {
                 className="text-2xl font-bold"
                 style={{ color: themeConfig.colors.text }}
               >
-                24
+                {events.length}
               </p>
             </div>
           </div>
@@ -218,7 +213,7 @@ const Events: React.FC = () => {
                 className="text-2xl font-bold"
                 style={{ color: themeConfig.colors.text }}
               >
-                1,245
+                {events.reduce((sum, event) => sum + (event.currentAttendees || 0), 0)}
               </p>
             </div>
           </div>
@@ -246,7 +241,7 @@ const Events: React.FC = () => {
                 className="text-2xl font-bold"
                 style={{ color: themeConfig.colors.text }}
               >
-                8
+                {events.filter(e => e.status === 'upcoming').length}
               </p>
             </div>
           </div>
@@ -274,7 +269,7 @@ const Events: React.FC = () => {
                 className="text-2xl font-bold"
                 style={{ color: themeConfig.colors.text }}
               >
-                12
+                {events.filter(e => e.isRecurring).length}
               </p>
             </div>
           </div>
@@ -330,98 +325,119 @@ const Events: React.FC = () => {
           </div>
 
           <div className="grid gap-4">
-            {filteredEvents.map((event) => (
-              <div
-                key={event.id}
-                className="border rounded-lg p-4 hover:shadow-md transition-shadow"
-                style={{
-                  backgroundColor: themeConfig.colors.background,
-                  borderColor: themeConfig.colors.divider
-                }}
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 
-                        className="font-semibold text-lg"
-                        style={{ color: themeConfig.colors.text }}
+            {loading ? (
+              <div className="text-center py-8">
+                <p style={{ color: themeConfig.colors.text, opacity: 0.7 }}>Loading events...</p>
+              </div>
+            ) : filteredEvents.length === 0 ? (
+              <div className="text-center py-8">
+                <p style={{ color: themeConfig.colors.text, opacity: 0.7 }}>No events found</p>
+              </div>
+            ) : (
+              filteredEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                  style={{
+                    backgroundColor: themeConfig.colors.background,
+                    borderColor: themeConfig.colors.divider
+                  }}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 
+                          className="font-semibold text-lg"
+                          style={{ color: themeConfig.colors.text }}
+                        >
+                          {event.title}
+                        </h3>
+                        <span 
+                          className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                          style={{
+                            backgroundColor: getCategoryColor(event.category).bg,
+                            color: getCategoryColor(event.category).text
+                          }}
+                        >
+                          {event.category}
+                        </span>
+                        {event.isRecurring && (
+                          <span 
+                            className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                            style={getRecurringBadgeStyle()}
+                          >
+                            Recurring
+                          </span>
+                        )}
+                      </div>
+                      <p 
+                        className="text-sm mb-2"
+                        style={{ color: themeConfig.colors.text, opacity: 0.7 }}
                       >
-                        {event.title}
-                      </h3>
+                        {event.description}
+                      </p>
+                      <div className="flex flex-wrap gap-4 text-sm">
+                        <div className="flex items-center gap-1">
+                          <CalendarIcon className="h-4 w-4" style={{ color: themeConfig.colors.text, opacity: 0.7 }} />
+                          <span style={{ color: themeConfig.colors.text }}>{formatDate(event.startDate)}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <ClockIcon className="h-4 w-4" style={{ color: themeConfig.colors.text, opacity: 0.7 }} />
+                          <span style={{ color: themeConfig.colors.text }}>{formatTime(event.startDate)}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MapPinIcon className="h-4 w-4" style={{ color: themeConfig.colors.text, opacity: 0.7 }} />
+                          <span style={{ color: themeConfig.colors.text }}>{event.location}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <UserIcon className="h-4 w-4" style={{ color: themeConfig.colors.text, opacity: 0.7 }} />
+                          <span style={{ color: themeConfig.colors.text }}>
+                            {event.currentAttendees}{event.maxAttendees && `/${event.maxAttendees}`} attendees
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
                       <span 
                         className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
                         style={{
-                          backgroundColor: getCategoryColor(event.category).bg,
-                          color: getCategoryColor(event.category).text
+                          backgroundColor: getStatusColor(event.status).bg,
+                          color: getStatusColor(event.status).text
                         }}
                       >
-                        {event.category}
+                        {event.status}
                       </span>
-                      {event.isRecurring && (
-                        <span 
-                          className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
-                          style={getRecurringBadgeStyle()}
+                      <button
+                        onClick={() => navigate(`/events/${event.id}`)}
+                        className="p-2 hover:opacity-70"
+                        style={{ color: themeConfig.colors.text, opacity: 0.7 }}
+                        title="View Event"
+                      >
+                        <EyeIcon className="h-4 w-4" />
+                      </button>
+                      {event.registrationRequired && (
+                        <button
+                          onClick={() => handleCopyRegistrationLink(event.id, event.title)}
+                          className="p-2 hover:opacity-70"
+                          style={{ color: '#6366F1', opacity: 0.7 }}
+                          title="Copy Registration Link"
                         >
-                          Recurring
-                        </span>
+                          <ShareIcon className="h-4 w-4" />
+                        </button>
                       )}
+                      <button
+                        onClick={() => handleDelete(event.id)}
+                        className="p-2 hover:opacity-70"
+                        style={{ color: '#EF4444', opacity: 0.7 }}
+                        title="Delete Event"
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </button>
                     </div>
-                    <p 
-                      className="text-sm mb-2"
-                      style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                    >
-                      {event.description}
-                    </p>
-                    <div className="flex flex-wrap gap-4 text-sm">
-                      <div className="flex items-center gap-1">
-                        <CalendarIcon className="h-4 w-4" style={{ color: themeConfig.colors.text, opacity: 0.7 }} />
-                        <span style={{ color: themeConfig.colors.text }}>{event.date}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <ClockIcon className="h-4 w-4" style={{ color: themeConfig.colors.text, opacity: 0.7 }} />
-                        <span style={{ color: themeConfig.colors.text }}>{event.time}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MapPinIcon className="h-4 w-4" style={{ color: themeConfig.colors.text, opacity: 0.7 }} />
-                        <span style={{ color: themeConfig.colors.text }}>{event.location}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <UserIcon className="h-4 w-4" style={{ color: themeConfig.colors.text, opacity: 0.7 }} />
-                        <span style={{ color: themeConfig.colors.text }}>
-                          {event.attendees}{event.maxAttendees && `/${event.maxAttendees}`} attendees
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span 
-                      className="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
-                      style={{
-                        backgroundColor: getStatusColor(event.status).bg,
-                        color: getStatusColor(event.status).text
-                      }}
-                    >
-                      {event.status}
-                    </span>
-                    <button
-                      onClick={() => navigate(`/events/${event.id}`)}
-                      className="p-2 hover:opacity-70"
-                      style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                      title="View Event"
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </button>
-                    <button
-                      className="p-2 hover:opacity-70"
-                      style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                      title="More Options"
-                    >
-                      <EllipsisVerticalIcon className="h-4 w-4" />
-                    </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

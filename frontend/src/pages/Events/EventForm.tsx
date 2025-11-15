@@ -3,16 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useTheme } from '../../contexts/ThemeContext'
 import RequirePermission from '../../components/Auth/RequirePermission'
 import { 
-  CalendarIcon, ClockIcon, MapPinIcon, UserIcon,
-  PlusIcon, MinusIcon, ArrowLeftIcon, SaveIcon,
-  InformationCircleIcon, ExclamationTriangleIcon,
-  BellIcon, CurrencyDollarIcon, UsersIcon,
-  TagIcon, EyeIcon, CogIcon, CheckIcon
+  CalendarIcon, ClockIcon, MapPinIcon,
+  PlusIcon, MinusIcon, ArrowLeftIcon,
+  InformationCircleIcon,
+  BellIcon, UsersIcon,
+  TagIcon, CheckIcon
 } from '@heroicons/react/24/outline'
 import { 
   eventService, 
   type Event, 
-  type EventRecurrence 
+  type EventRecurrence,
+  type CustomRegistrationField
 } from '../../services/eventService'
 
 interface EventFormData {
@@ -91,7 +92,8 @@ const EventForm: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [newTag, setNewTag] = useState('')
   const [newEquipment, setNewEquipment] = useState('')
-  const [activeSection, setActiveSection] = useState<'basic' | 'schedule' | 'registration' | 'location' | 'recurrence' | 'notifications'>('basic')
+  const [customFields, setCustomFields] = useState<CustomRegistrationField[]>([])
+  const [activeSection, setActiveSection] = useState<'basic' | 'schedule' | 'registration' | 'location' | 'recurrence' | 'notifications' | 'custom-fields'>('basic')
 
   useEffect(() => {
     if (isEditing) {
@@ -134,6 +136,9 @@ const EventForm: React.FC = () => {
           visibility: event.visibility,
           notifications: event.notifications
         })
+        if (event.customRegistrationFields) {
+          setCustomFields(event.customRegistrationFields)
+        }
       }
     } catch (error) {
       console.error('Error loading event:', error)
@@ -225,7 +230,7 @@ const EventForm: React.FC = () => {
         registrationDeadline: formData.registrationDeadline ? new Date(formData.registrationDeadline) : undefined,
         registrationFee: formData.registrationFee ? parseFloat(formData.registrationFee) : undefined,
         isRecurring: formData.isRecurring,
-        recurrence: formData.isRecurring ? formData.recurrence : undefined,
+        recurrence: formData.isRecurring && formData.recurrence ? formData.recurrence : undefined,
         location_details: {
           address: formData.location_details.address.trim() || undefined,
           room: formData.location_details.room.trim() || undefined,
@@ -235,6 +240,7 @@ const EventForm: React.FC = () => {
         tags: formData.tags,
         visibility: formData.visibility,
         notifications: formData.notifications,
+        customRegistrationFields: customFields.length > 0 ? customFields : undefined,
         status: 'upcoming' as const,
         createdBy: 'current-user-id' // Should get from auth context
       }
@@ -319,10 +325,51 @@ const EventForm: React.FC = () => {
     }))
   }
 
+  const handleAddCustomField = () => {
+    const newField: CustomRegistrationField = {
+      id: `field_${Date.now()}`,
+      label: 'New Field',
+      type: 'text',
+      required: false,
+      order: customFields.length + 1
+    }
+    setCustomFields([...customFields, newField])
+  }
+
+  const handleUpdateCustomField = (fieldId: string, updates: Partial<CustomRegistrationField>) => {
+    setCustomFields(customFields.map(field =>
+      field.id === fieldId ? { ...field, ...updates } : field
+    ))
+  }
+
+  const handleRemoveCustomField = (fieldId: string) => {
+    setCustomFields(customFields.filter(field => field.id !== fieldId))
+  }
+
+  const moveCustomField = (fieldId: string, direction: 'up' | 'down') => {
+    const index = customFields.findIndex(f => f.id === fieldId)
+    if (index === -1) return
+    
+    const newFields = [...customFields]
+    const targetIndex = direction === 'up' ? index - 1 : index + 1
+    
+    if (targetIndex < 0 || targetIndex >= newFields.length) return
+    
+    [newFields[index], newFields[targetIndex]] = [newFields[targetIndex], newFields[index]]
+    
+    // Update order numbers
+    newFields.forEach((field, idx) => {
+      field.order = idx + 1
+    })
+    
+    setCustomFields(newFields)
+  }
+
   const sections = [
     { key: 'basic', label: 'Basic Information', icon: InformationCircleIcon },
     { key: 'schedule', label: 'Schedule & Duration', icon: CalendarIcon },
     { key: 'registration', label: 'Registration', icon: UsersIcon },
+    { key: 'custom-fields', label: 'Custom Fields', icon: TagIcon },
     { key: 'location', label: 'Location Details', icon: MapPinIcon },
     { key: 'recurrence', label: 'Recurrence', icon: ClockIcon },
     { key: 'notifications', label: 'Notifications', icon: BellIcon }
@@ -689,6 +736,150 @@ const EventForm: React.FC = () => {
             </div>
           )}
 
+          {/* Custom Registration Fields */}
+          {activeSection === 'custom-fields' && (
+            <div className="bg-white rounded-lg p-6 border" style={{ borderColor: themeConfig.colors.divider }}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Custom Registration Fields</h3>
+                <button
+                  type="button"
+                  onClick={handleAddCustomField}
+                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                >
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Add Field
+                </button>
+              </div>
+
+              {customFields.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No custom fields added yet. Click "Add Field" to create custom registration questions.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {customFields.map((field, index) => (
+                    <div key={field.id} className="border border-gray-200 rounded-lg p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="md:col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Field Label
+                          </label>
+                          <input
+                            type="text"
+                            value={field.label}
+                            onChange={(e) => handleUpdateCustomField(field.id, { label: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Enter field label"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Field Type
+                          </label>
+                          <select
+                            value={field.type}
+                            onChange={(e) => handleUpdateCustomField(field.id, { type: e.target.value as any })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="text">Text</option>
+                            <option value="textarea">Text Area</option>
+                            <option value="number">Number</option>
+                            <option value="email">Email</option>
+                            <option value="phone">Phone</option>
+                            <option value="date">Date</option>
+                            <option value="select">Dropdown</option>
+                            <option value="radio">Radio Buttons</option>
+                            <option value="checkbox">Checkbox</option>
+                          </select>
+                        </div>
+
+                        {(field.type === 'text' || field.type === 'textarea') && (
+                          <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Placeholder Text
+                            </label>
+                            <input
+                              type="text"
+                              value={field.placeholder || ''}
+                              onChange={(e) => handleUpdateCustomField(field.id, { placeholder: e.target.value })}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Enter placeholder text"
+                            />
+                          </div>
+                        )}
+
+                        {(field.type === 'select' || field.type === 'radio') && (
+                          <div className="md:col-span-3">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Options (comma separated)
+                            </label>
+                            <input
+                              type="text"
+                              value={field.options?.join(', ') || ''}
+                              onChange={(e) => handleUpdateCustomField(field.id, { 
+                                options: e.target.value.split(',').map(opt => opt.trim()).filter(opt => opt)
+                              })}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Option 1, Option 2, Option 3"
+                            />
+                          </div>
+                        )}
+
+                        <div className="md:col-span-3 flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <label className="flex items-center">
+                              <input
+                                type="checkbox"
+                                checked={field.required}
+                                onChange={(e) => handleUpdateCustomField(field.id, { required: e.target.checked })}
+                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                              />
+                              <span className="ml-2 text-sm text-gray-700">Required</span>
+                            </label>
+                          </div>
+
+                          <div className="flex items-center space-x-2">
+                            <button
+                              type="button"
+                              onClick={() => moveCustomField(field.id, 'up')}
+                              disabled={index === 0}
+                              className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                              title="Move up"
+                            >
+                              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                              </svg>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveCustomField(field.id, 'down')}
+                              disabled={index === customFields.length - 1}
+                              className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                              title="Move down"
+                            >
+                              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveCustomField(field.id)}
+                              className="p-1 text-red-400 hover:text-red-600"
+                              title="Remove field"
+                            >
+                              <MinusIcon className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Location Details */}
           {activeSection === 'location' && (
             <div className="bg-white rounded-lg p-6 border" style={{ borderColor: themeConfig.colors.divider }}>
@@ -968,7 +1159,7 @@ const EventForm: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <SaveIcon className="h-4 w-4 mr-2" />
+                  <CheckIcon className="h-4 w-4 mr-2" />
                   {isEditing ? 'Update Event' : 'Create Event'}
                 </>
               )}

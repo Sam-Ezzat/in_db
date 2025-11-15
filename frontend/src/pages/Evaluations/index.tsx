@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { Link } from 'react-router-dom';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
@@ -12,142 +13,115 @@ import {
   UserGroupIcon,
   CalendarDaysIcon,
   StarIcon,
+  CheckCircleIcon,
 } from '@heroicons/react/24/outline';
 import KPIEvaluations from '../KPIs/KPIEvaluations';
-
-// Enhanced color functions with theme integration
-const getTypeColor = (type: string) => {
-  const colors = {
-    'Program': { bg: '#dbeafe', text: '#1e40af', darkBg: '#1e3a8a20', darkText: '#93c5fd' },
-    'Event': { bg: '#dcfce7', text: '#166534', darkBg: '#16553420', darkText: '#86efac' },
-    'Service': { bg: '#f3e8ff', text: '#7c2d12', darkBg: '#7c2d1220', darkText: '#c4b5fd' },
-    'Ministry': { bg: '#fed7aa', text: '#c2410c', darkBg: '#c2410c20', darkText: '#fdba74' },
-    'Leadership': { bg: '#fecaca', text: '#dc2626', darkBg: '#dc262620', darkText: '#fca5a5' },
-  };
-  return colors[type as keyof typeof colors] || { bg: '#f3f4f6', text: '#4b5563', darkBg: '#4b556320', darkText: '#d1d5db' };
-};
-
-const getStatusColor = (status: string) => {
-  const colors = {
-    'Active': { bg: '#dcfce7', text: '#166534', darkBg: '#16553420', darkText: '#86efac' },
-    'Draft': { bg: '#fef3c7', text: '#d97706', darkBg: '#d9770620', darkText: '#fcd34d' },
-    'Completed': { bg: '#dbeafe', text: '#1e40af', darkBg: '#1e3a8a20', darkText: '#93c5fd' },
-    'Archived': { bg: '#f3f4f6', text: '#4b5563', darkBg: '#4b556320', darkText: '#d1d5db' },
-  };
-  return colors[status as keyof typeof colors] || { bg: '#f3f4f6', text: '#4b5563', darkBg: '#4b556320', darkText: '#d1d5db' };
-};
-
-interface Evaluation {
-  id: string;
-  title: string;
-  description: string;
-  type: 'Program' | 'Event' | 'Service' | 'Ministry' | 'Leadership';
-  status: 'Active' | 'Draft' | 'Completed' | 'Archived';
-  createdDate: string;
-  responses: number;
-  averageRating: number;
-  questions: number;
-  targetAudience: string;
-  deadline?: string;
-  category: string;
-}
+import { evaluationService, Evaluation, EvaluationStatistics } from '../../services/evaluationService';
 
 const Evaluations: React.FC = () => {
   const { themeConfig, theme } = useTheme();
+  
+  // Theme-aware color functions
+  const getTypeColor = (type: string) => {
+    const colors = {
+      'Program': { bg: '#dbeafe', text: '#1e40af', darkBg: '#1e3a8a20', darkText: '#93c5fd' },
+      'Event': { bg: '#dcfce7', text: '#166534', darkBg: '#16553420', darkText: '#86efac' },
+      'Service': { bg: '#f3e8ff', text: '#7c2d12', darkBg: '#7c2d1220', darkText: '#c4b5fd' },
+      'Ministry': { bg: '#fed7aa', text: '#c2410c', darkBg: '#c2410c20', darkText: '#fdba74' },
+      'Leadership': { bg: '#fecaca', text: '#dc2626', darkBg: '#dc262620', darkText: '#fca5a5' },
+    };
+    return colors[type as keyof typeof colors] || { bg: '#f3f4f6', text: '#4b5563', darkBg: '#4b556320', darkText: '#d1d5db' };
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors = {
+      'Active': { bg: '#dcfce7', text: '#166534', darkBg: '#16553420', darkText: '#86efac' },
+      'Draft': { bg: '#fef3c7', text: '#d97706', darkBg: '#d9770620', darkText: '#fcd34d' },
+      'Completed': { bg: '#dbeafe', text: '#1e40af', darkBg: '#1e3a8a20', darkText: '#93c5fd' },
+      'Archived': { bg: '#f3f4f6', text: '#4b5563', darkBg: '#4b556320', darkText: '#d1d5db' },
+    };
+    return colors[status as keyof typeof colors] || { bg: '#f3f4f6', text: '#4b5563', darkBg: '#4b556320', darkText: '#d1d5db' };
+  };
+  
   const [activeTab, setActiveTab] = useState<'surveys' | 'kpis'>('surveys');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
+  const [statistics, setStatistics] = useState<EvaluationStatistics | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data for evaluations
-  const evaluations: Evaluation[] = [
-    {
-      id: '1',
-      title: 'Sunday Service Experience',
-      description: 'Weekly evaluation of Sunday worship service experience and feedback',
-      type: 'Service',
-      status: 'Active',
-      createdDate: '2024-01-15',
-      responses: 143,
-      averageRating: 4.7,
-      questions: 12,
-      targetAudience: 'All Congregants',
-      deadline: '2024-12-31',
-      category: 'Worship'
-    },
-    {
-      id: '2',
-      title: 'Youth Ministry Program Assessment',
-      description: 'Quarterly evaluation of youth ministry programs and activities',
-      type: 'Program',
-      status: 'Active',
-      createdDate: '2024-01-10',
-      responses: 87,
-      averageRating: 4.5,
-      questions: 15,
-      targetAudience: 'Youth & Parents',
-      deadline: '2024-03-31',
-      category: 'Youth Ministry'
-    },
-    {
-      id: '3',
-      title: 'Leadership Training Effectiveness',
-      description: 'Assessment of leadership development program effectiveness',
-      type: 'Leadership',
-      status: 'Completed',
-      createdDate: '2024-01-05',
-      responses: 24,
-      averageRating: 4.2,
-      questions: 18,
-      targetAudience: 'Ministry Leaders',
-      category: 'Leadership Development'
-    },
-    {
-      id: '4',
-      title: 'Christmas Service Feedback',
-      description: 'Special evaluation for Christmas service experience',
-      type: 'Event',
-      status: 'Completed',
-      createdDate: '2023-12-26',
-      responses: 298,
-      averageRating: 4.9,
-      questions: 8,
-      targetAudience: 'All Attendees',
-      category: 'Special Events'
-    },
-    {
-      id: '5',
-      title: 'Small Groups Effectiveness',
-      description: 'Evaluation of small group ministry impact and satisfaction',
-      type: 'Ministry',
-      status: 'Draft',
-      createdDate: '2024-01-20',
-      responses: 0,
-      averageRating: 0,
-      questions: 14,
-      targetAudience: 'Small Group Members',
-      deadline: '2024-04-15',
-      category: 'Discipleship'
+  useEffect(() => {
+    loadEvaluations();
+  }, [searchTerm, selectedType, selectedStatus]);
+
+  const loadEvaluations = async () => {
+    try {
+      setLoading(true);
+      const [evalData, statsData] = await Promise.all([
+        evaluationService.getEvaluations({
+          type: selectedType !== 'All' ? selectedType as any : undefined,
+          status: selectedStatus !== 'All' ? selectedStatus as any : undefined,
+          search: searchTerm || undefined
+        }),
+        evaluationService.getStatistics()
+      ]);
+      setEvaluations(evalData);
+      setStatistics(statsData);
+    } catch (error) {
+      console.error('Failed to load evaluations:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
-
-  const filteredEvaluations = evaluations.filter(evaluation => {
-    const matchesSearch = evaluation.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         evaluation.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         evaluation.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = selectedType === 'All' || evaluation.type === selectedType;
-    const matchesStatus = selectedStatus === 'All' || evaluation.status === selectedStatus;
-    
-    return matchesSearch && matchesType && matchesStatus;
-  });
-
-  const stats = {
-    total: evaluations.length,
-    active: evaluations.filter(e => e.status === 'Active').length,
-    totalResponses: evaluations.reduce((sum, e) => sum + e.responses, 0),
-    averageRating: evaluations.reduce((sum, e) => sum + e.averageRating, 0) / evaluations.length
   };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this evaluation? All questions and responses will be deleted.')) {
+      return;
+    }
+
+    try {
+      await evaluationService.deleteEvaluation(id);
+      loadEvaluations();
+    } catch (error) {
+      console.error('Failed to delete evaluation:', error);
+      alert('Failed to delete evaluation');
+    }
+  };
+
+  const filteredEvaluations = evaluations;
+
+  const statsData = statistics ? [
+    { 
+      title: 'Total Evaluations', 
+      value: statistics.totalEvaluations, 
+      icon: DocumentTextIcon,
+      color: '#3b82f6',
+      darkColor: '#60a5fa'
+    },
+    { 
+      title: 'Active Surveys', 
+      value: statistics.activeEvaluations, 
+      icon: CheckCircleIcon,
+      color: '#10b981',
+      darkColor: '#34d399'
+    },
+    { 
+      title: 'Total Responses', 
+      value: statistics.totalResponses, 
+      icon: UserGroupIcon,
+      color: '#8b5cf6',
+      darkColor: '#a78bfa'
+    },
+    { 
+      title: 'Average Rating', 
+      value: statistics.averageRating.toFixed(1), 
+      icon: ChartBarIcon,
+      color: '#f59e0b',
+      darkColor: '#fbbf24',
+      suffix: '/5'
+    }
+  ] : [];
 
   return (
     <div className="space-y-6">
@@ -168,17 +142,13 @@ const Evaluations: React.FC = () => {
           </p>
         </div>
         <div className="mt-4 sm:mt-0">
-          <button 
-            onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
-            style={{ 
-              backgroundColor: themeConfig.colors.primary,
-              borderColor: themeConfig.colors.primary
-            }}
+          <Link 
+            to="/evaluations/new"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
             Create Evaluation
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -227,127 +197,49 @@ const Evaluations: React.FC = () => {
       ) : (
         <>
       {/* Stats Cards */}
+      {loading ? (
+        <div className="text-center py-8" style={{ color: themeConfig.colors.text }}>
+          Loading...
+        </div>
+      ) : (
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div 
-          className="overflow-hidden shadow rounded-lg"
-          style={{ backgroundColor: themeConfig.colors.secondary }}
-        >
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <ClipboardDocumentListIcon 
-                  className="h-6 w-6" 
-                  style={{ color: themeConfig.colors.text, opacity: 0.6 }}
-                  aria-hidden="true" 
-                />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt 
-                    className="text-sm font-medium truncate"
-                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                  >
-                    Total Evaluations
-                  </dt>
-                  <dd 
-                    className="text-lg font-medium"
-                    style={{ color: themeConfig.colors.text }}
-                  >
-                    {stats.total}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div 
-          className="overflow-hidden shadow rounded-lg"
-          style={{ backgroundColor: themeConfig.colors.secondary }}
-        >
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <ChartBarIcon className="h-6 w-6 text-green-400" aria-hidden="true" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt 
-                    className="text-sm font-medium truncate"
-                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                  >
-                    Active Evaluations
-                  </dt>
-                  <dd 
-                    className="text-lg font-medium"
-                    style={{ color: themeConfig.colors.text }}
-                  >
-                    {stats.active}
-                  </dd>
-                </dl>
+        {statsData.map((stat, index) => (
+          <div 
+            key={index}
+            className="overflow-hidden shadow rounded-lg"
+            style={{ backgroundColor: themeConfig.colors.secondary }}
+          >
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <stat.icon 
+                    className="h-6 w-6" 
+                    style={{ color: theme === 'dark' ? stat.darkColor : stat.color }}
+                    aria-hidden="true" 
+                  />
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt 
+                      className="text-sm font-medium truncate"
+                      style={{ color: themeConfig.colors.text, opacity: 0.7 }}
+                    >
+                      {stat.title}
+                    </dt>
+                    <dd 
+                      className="text-lg font-medium"
+                      style={{ color: themeConfig.colors.text }}
+                    >
+                      {stat.value}{stat.suffix || ''}
+                    </dd>
+                  </dl>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <div 
-          className="overflow-hidden shadow rounded-lg"
-          style={{ backgroundColor: themeConfig.colors.secondary }}
-        >
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <UserGroupIcon className="h-6 w-6 text-blue-400" aria-hidden="true" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt 
-                    className="text-sm font-medium truncate"
-                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                  >
-                    Total Responses
-                  </dt>
-                  <dd 
-                    className="text-lg font-medium"
-                    style={{ color: themeConfig.colors.text }}
-                  >
-                    {stats.totalResponses.toLocaleString()}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div 
-          className="overflow-hidden shadow rounded-lg"
-          style={{ backgroundColor: themeConfig.colors.secondary }}
-        >
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <StarIcon className="h-6 w-6 text-yellow-400" aria-hidden="true" />
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt 
-                    className="text-sm font-medium truncate"
-                    style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-                  >
-                    Average Rating
-                  </dt>
-                  <dd 
-                    className="text-lg font-medium"
-                    style={{ color: themeConfig.colors.text }}
-                  >
-                    {stats.averageRating.toFixed(1)}
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
+      )}
 
       {/* Filters */}
       <div 
@@ -480,15 +372,28 @@ const Evaluations: React.FC = () => {
                         </div>
                         <div className="flex items-center">
                           <UserGroupIcon className="h-4 w-4 mr-1" />
-                          {evaluation.responses} responses
+                          {evaluation.responses.length} responses
                         </div>
                         <div className="flex items-center">
                           <DocumentTextIcon className="h-4 w-4 mr-1" />
-                          {evaluation.questions} questions
+                          {evaluation.questions.length} questions
                         </div>
                         <div className="flex items-center">
                           <StarIcon className="h-4 w-4 mr-1" />
-                          {evaluation.averageRating > 0 ? evaluation.averageRating.toFixed(1) : 'No ratings'}
+                          {(() => {
+                            const ratingQuestions = evaluation.questions.filter(q => q.type === 'rating');
+                            if (ratingQuestions.length === 0 || evaluation.responses.length === 0) return 'No ratings';
+                            let total = 0, count = 0;
+                            evaluation.responses.forEach(r => {
+                              r.answers.forEach(a => {
+                                if (ratingQuestions.find(q => q.id === a.questionId) && typeof a.value === 'number') {
+                                  total += a.value;
+                                  count++;
+                                }
+                              });
+                            });
+                            return count > 0 ? (total / count).toFixed(1) : 'No ratings';
+                          })()}
                         </div>
                         {evaluation.deadline && (
                           <div className="flex items-center">
@@ -509,25 +414,22 @@ const Evaluations: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center space-x-2 ml-4">
-                      <button 
+                      <Link 
+                        to={`/evaluations/${evaluation.id}`}
                         className="p-2 hover:opacity-70"
                         style={{ color: themeConfig.colors.text, opacity: 0.6 }}
                       >
                         <EyeIcon className="h-5 w-5" />
-                      </button>
-                      <button 
-                        className="p-2 hover:opacity-70"
-                        style={{ color: themeConfig.colors.text, opacity: 0.6 }}
-                      >
-                        <ChartBarIcon className="h-5 w-5" />
-                      </button>
-                      <button 
+                      </Link>
+                      <Link 
+                        to={`/evaluations/${evaluation.id}/edit`}
                         className="p-2 hover:opacity-70"
                         style={{ color: themeConfig.colors.text, opacity: 0.6 }}
                       >
                         <PencilIcon className="h-5 w-5" />
-                      </button>
+                      </Link>
                       <button 
+                        onClick={() => handleDelete(evaluation.id)}
                         className="p-2 hover:opacity-70"
                         style={{ color: '#ef4444' }}
                       >
@@ -541,54 +443,6 @@ const Evaluations: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Create Evaluation Modal placeholder */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div 
-            className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md"
-            style={{ 
-              backgroundColor: themeConfig.colors.secondary,
-              borderColor: themeConfig.colors.divider
-            }}
-          >
-            <div className="mt-3">
-              <h3 
-                className="text-lg font-medium mb-4"
-                style={{ color: themeConfig.colors.text }}
-              >
-                Create New Evaluation
-              </h3>
-              <p 
-                className="text-sm mb-4"
-                style={{ color: themeConfig.colors.text, opacity: 0.7 }}
-              >
-                Evaluation form builder will be implemented here with drag-and-drop question types, 
-                conditional logic, and response analytics.
-              </p>
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-sm font-medium rounded-md hover:opacity-80"
-                  style={{
-                    color: themeConfig.colors.text,
-                    backgroundColor: themeConfig.colors.divider
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-sm font-medium text-white rounded-md hover:opacity-90"
-                  style={{ backgroundColor: themeConfig.colors.primary }}
-                >
-                  Create Evaluation
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
         </>
       )}
     </div>

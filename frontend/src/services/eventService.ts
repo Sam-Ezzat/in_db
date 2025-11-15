@@ -36,9 +36,25 @@ export interface Event {
     sms: boolean
     reminder_hours: number[]
   }
+  customRegistrationFields?: CustomRegistrationField[]
   createdAt: Date
   updatedAt: Date
   createdBy: string
+}
+
+export interface CustomRegistrationField {
+  id: string
+  label: string
+  type: 'text' | 'textarea' | 'number' | 'email' | 'phone' | 'date' | 'select' | 'checkbox' | 'radio'
+  required: boolean
+  placeholder?: string
+  options?: string[] // For select, radio
+  validation?: {
+    min?: number
+    max?: number
+    pattern?: string
+  }
+  order: number
 }
 
 export interface EventRecurrence {
@@ -69,6 +85,7 @@ export interface EventRegistration {
   }
   dietary_restrictions?: string[]
   special_needs?: string
+  customFieldValues?: { [fieldId: string]: any }
 }
 
 export interface EventAttendance {
@@ -675,8 +692,8 @@ export class EventService extends BaseService {
         id: 'event_2',
         title: 'Youth Bible Study',
         description: 'Interactive Bible study for young adults (18-35)',
-        startDate: new Date('2024-01-15T19:00:00'),
-        endDate: new Date('2024-01-15T20:30:00'),
+        startDate: new Date('2025-11-25T19:00:00'),
+        endDate: new Date('2025-11-25T20:30:00'),
         allDay: false,
         location: 'Youth Center',
         category: 'youth',
@@ -686,7 +703,8 @@ export class EventService extends BaseService {
         maxAttendees: 50,
         currentAttendees: 32,
         registrationRequired: true,
-        registrationDeadline: new Date('2024-01-15T12:00:00'),
+        registrationDeadline: new Date('2025-11-24T12:00:00'),
+        registrationFee: 10,
         isRecurring: true,
         recurrence: {
           pattern: 'weekly',
@@ -699,12 +717,45 @@ export class EventService extends BaseService {
           equipment: ['Whiteboard', 'Chairs', 'Coffee Station']
         },
         tags: ['youth', 'bible-study', 'weekly'],
-        visibility: 'members_only',
+        visibility: 'public',
         notifications: {
           email: true,
           sms: true,
           reminder_hours: [24, 4]
         },
+        customRegistrationFields: [
+          {
+            id: 'field_1',
+            label: 'T-Shirt Size',
+            type: 'select',
+            required: true,
+            options: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+            order: 1
+          },
+          {
+            id: 'field_2',
+            label: 'Previous Bible Study Experience',
+            type: 'radio',
+            required: true,
+            options: ['Beginner', 'Intermediate', 'Advanced'],
+            order: 2
+          },
+          {
+            id: 'field_3',
+            label: 'Topics of Interest',
+            type: 'textarea',
+            required: false,
+            placeholder: 'What topics would you like to study?',
+            order: 3
+          },
+          {
+            id: 'field_4',
+            label: 'Can you help with setup?',
+            type: 'checkbox',
+            required: false,
+            order: 4
+          }
+        ],
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-01'),
         createdBy: 'user_2'
